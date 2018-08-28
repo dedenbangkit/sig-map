@@ -1,3 +1,5 @@
+let maps;
+
 var nainclude = [
 	'identifier',
 	'latitude',
@@ -23,8 +25,13 @@ var qgroup = [
     {'n':'Geolocation','q':1}
 ];
 
-function getDetails(a) {
-	let id = $(a).attr('data');
+function getDetails(a, atype) {
+    let id;
+    if (atype === 'id'){
+        id = a;
+    }else{
+	    id = $(a).attr('data');
+    }
     $.get('/api/details/'+ id ).done(function(data){
 		$('#school_name').text(data['name of school?']);
 		$('#school_desc').children().remove();
@@ -103,4 +110,17 @@ function autoAnswer() {
 			}
 		}
 	}
+}
+
+function focusTo() {
+    let latlng = $('#zoom_find').val();
+    let id= $('#find').attr('data-search');
+    latlng = latlng.split(',');
+    latlng = [parseFloat(latlng[0]), parseFloat(latlng[1])];
+    maps.setView(new L.LatLng(latlng[0],latlng[1]), 18);
+    getDetails(id, 'id');
+}
+
+function focusNormal() {
+    maps.setView(new L.LatLng(-8.19,158.55), 7);
 }

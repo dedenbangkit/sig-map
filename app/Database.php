@@ -21,6 +21,15 @@ class Database extends Model
         return $db;
     }
 
+    public function search($q)
+    {
+        $db = $this->select('28390923 as school', 'identifier', 'latitude', 'longitude')
+            ->where('school', 'LIKE', '%'.$q.'%')
+            ->orWhere('identifier', 'LIKE', '%'.$q.'%')
+            ->take(5)->get();
+        return $db;
+    }
+
     public function details($id)
     {
         $db = $this->where('identifier', $id)->first();

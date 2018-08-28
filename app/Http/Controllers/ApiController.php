@@ -28,6 +28,11 @@ class ApiController extends Controller
         return $ds;
     } 
 
+    public function searchData(Request $request, DB $db)
+    {
+        return $db->search($request->q);
+    }
+
     private function mutateColumns($array, $request)
     {
         $params = $this->getParams($request);

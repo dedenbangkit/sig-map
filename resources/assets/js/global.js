@@ -124,3 +124,28 @@ function focusTo() {
 function focusNormal() {
     maps.setView(new L.LatLng(-8.19,158.55), 7);
 }
+
+function jqUI(){
+    $("#find").autocomplete({
+      minLength: 4,
+      source: function(request, response) {
+          $.getJSON( '/api/search/' + request.term, {
+          }, response );
+      },
+      focus: function( event, ui ) {
+        $( "#find" ).val( ui.item.school);
+        $( "#find" ).attr('data-search', ui.item.identifier);
+        $( "#zoom_find" ).val([ui.item.latitude, ui.item.longitude]);
+        return false;
+      },
+      select: function( event, ui ) {
+        $( "#find" ).val( ui.item.school);
+        return false;
+      }
+    })
+    .autocomplete("instance")._renderItem = function( ul, item ) {
+      return $( "<li>" )
+        .append( "<div>" + item.school + "<span class='badge badge-small badge-primary'>" + item.identifier + "</span></div>" )
+        .appendTo( ul );
+    };
+}

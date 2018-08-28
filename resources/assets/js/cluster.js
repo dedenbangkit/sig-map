@@ -1,4 +1,5 @@
 import 'leaflet';
+
 (function(window, document, undefined) {
     L.MarkerClusterGroup = L.FeatureGroup.extend({
         options: {

@@ -1,6 +1,7 @@
 
 // Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+//@import url('https://fonts.googleapis.com/css?family=Nunito');
 
 // Variables
 @import 'variables';
@@ -20,6 +21,9 @@ body {
   padding: 3rem 1.5rem;
   text-align: center;
 }
+.navbar-brand {
+  padding-top:0px;
+}
 
 .navbar-laravel {
   background-color: #fff;
@@ -31,9 +35,14 @@ body {
     padding-top: 55px;
 }
 
-.modal-body{
-	max-height: 400px;
+#school_desc {
+    margin-top: 10px;
+    max-height: 400px;
     overflow-y: scroll;
+}
+
+#detail_modal .modal-body {
+	padding: 1rem 1rem 0rem;
 }
 .badge{
     font-size: 100%;

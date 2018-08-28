@@ -11,25 +11,44 @@ var nainclude = [
 	'duration'
 ];
 
+var qgroup = [
+    {'n':'Interview Details','q': 10},
+    {'n':'School Information','q': 13},
+    {'n':'Water Supply','q': 20},
+    {'n':'Sanitation','q':31},
+    {'n':'Hygiene','q':9},
+    {'n':'School Management','q':42},
+    {'n':'Teacher','q':3},
+    {'n':'Head Teacher','q':4},
+    {'n':'Geolocation','q':1}
+];
+
 function getDetails(a) {
 	let id = $(a).attr('data');
     $.get('/api/details/'+ id ).done(function(data){
 		$('#school_name').text(data['name of school?']);
 		$('#school_desc').children().remove();
-		$('#school_feature').html("");
+		$('#school_feature').children().remove();
 		Object.keys(data).forEach(function (key) {
 			var features = nainclude.includes(key);
 			if (!features) {
 				if (data[key]){
 					let body;
 					var str = data[key];
-					if (str.startsWith("https://")){
+                    if(!isNaN(str)){
+                        key = "<i class='fas fa-hashtag'></i> " + key;
+						body = "<div class='badge badge-warning'>" + str + "</div>";
+                    } else if (str.startsWith("https://")){
 						body = "<img src='"+data[key]+"' class='img-fluid img-thumbnail rounded'>";
+                        key = "<i class='fas fa-camera'></i> " + key;
 					} else if(str.startsWith("Yes")){
+                        key = "<i class='fas fa-list-ul'></i> " + key;
 						body = "<div class='badge badge-success'>" + str + "</div>";
 					} else if(str.startsWith("No")){
+                        key = "<i class='fas fa-list-ul'></i> " + key;
 						body = "<div class='badge badge-danger'>" + str + "</div>";
-                    }else {
+                    } else {
+                        key = "<i class='fas fa-align-justify'></i> " + key;
 						body = "<div class='badge badge-primary'>" + str + "</div>";
 					}
 					$('#school_desc').append(
@@ -39,8 +58,11 @@ function getDetails(a) {
 				};
 			}
 		});
-		$('#myModal').modal('show');
+		$('#detail_modal').modal('show');
     });
+}
+
+function getGroup(x,y) {
 }
 
 function autoQuestion() {

@@ -9,14 +9,25 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
-html {
-    height:100%;
+body,html {
+  height:100%;
 }
 
 body {
-  height:100%
+  padding-top: 55px;
+  font-size:unset;
 }
-
+main.container{
+    margin-top:40px;
+    margin-bottom:40px;
+}
+tbody tr{
+    cursor:pointer;
+}
+tbody tr:hover{
+    background: #efefef;
+    color: #a26969;
+}
 .starter-template {
   padding: 3rem 1.5rem;
   text-align: center;
@@ -44,6 +55,13 @@ body {
 
 #detail_modal .modal-body {
 	padding: 1rem 1rem 0rem;
+}
+
+#stack_search a:first-child,
+#stack_search a:nth-child(1),
+#stack_search a:nth-child(2),
+#stack_search a:nth-child(3){
+    display:none;
 }
 
 /* Bootstrap modified */
@@ -199,4 +217,39 @@ body {
 .badge-small {
     font-size:0.6rem;
     display:table-caption;
+}
+
+/* datatable */
+.dt-buttons.btn-group{
+    display:none;
+}
+.dt-button.dropdown-item.buttons-columnVisibility.active{
+    color: inherit;
+    text-decoration: none;
+    background-color: inherit;
+}
+.buttons-columnVisibility:before{
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    padding-right: 10px;
+    content: "\f00c";
+    color:$white;
+}
+.buttons-columnVisibility.active:before{
+    color:inherit;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    padding-right: 10px;
+    content: "\f00c";
+}
+.dataTables_processing.card{
+    position: absolute;
+    width: 100px;
+    z-index: 15;
+    top: 50%;
+    left: 50%;
+    margin: -50px 0 0 -50px;
+    background: #f8fafc;
+    padding: 5px;
+    text-align: center;
 }

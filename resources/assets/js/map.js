@@ -1,5 +1,9 @@
 import 'leaflet';
 
+$('#stack_search a:nth-child(1)').css('display', 'inline-block');
+$('#stack_search a:nth-child(2)').css('display', 'inline-block');
+$('#stack_search a:nth-child(3)').css('display', 'inline-block');
+
 var mymap = L.map('mapid',{zoomControl:false}).setView([-8.19, 158.55], 7);
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

@@ -1,3 +1,10 @@
+
+/*
+ *
+ * Global Map Functions
+ *
+ */
+
 let maps;
 
 var nainclude = [
@@ -149,3 +156,9 @@ function jqUI(){
         .appendTo( ul );
     };
 }
+
+/*
+ *
+ * Global Database Function
+ *
+ */

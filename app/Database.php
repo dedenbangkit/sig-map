@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 class Database extends Model
 {
+    /*
+    public function getTotalStudentsAttribute()
+    {
+        $total = $this->attributes['28390924'] + $this->attributes['23430922'];
+        return $total;
+    }
+     */
 
     public function locations()
     {
@@ -35,4 +42,22 @@ class Database extends Model
         $db = $this->where('identifier', $id)->first();
         return $db;
     }
+
+    public function datatable()
+    {
+        return $this->select(
+            '28390923', 
+            '23430921', 
+            '22480946', 
+            'identifier',
+            '26390924',
+            '28390924 as s_girls',
+            '23430922 as s_boys',
+            '20490967 as t_toilet',
+            '20510942 as s_toilet',
+            '22530927 as t_girls',
+            '27360922 as t_boys'
+        );
+    }
+
 }

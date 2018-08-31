@@ -13,9 +13,14 @@ let mix = require('laravel-mix');
 
 mix.js([
     'resources/assets/js/bootstrap.js',
-    'resources/assets/js/cluster.js',
-    'resources/assets/js/app.js',
     ], 'public/js/app.js')
+    .js([
+    'resources/assets/js/cluster.js',
+    'resources/assets/js/map.js',
+    ], 'public/js/map.js')
+    .js([
+    'resources/assets/js/database.js',
+    ], 'public/js/database.js')
     .copy('resources/assets/images/', 'public/images/')
     .copy('resources/assets/js/global.js', 'public/js/global.js')
     .copy('node_modules/leaflet/dist/', 'public/vendor/leaflet/')

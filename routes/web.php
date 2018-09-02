@@ -13,3 +13,4 @@
 
 Route::get('/', 'PageController@index')->name('landing');
 Route::get('/database', 'PageController@database')->name('database');
+Route::get('/stats/{page}', 'PageController@stats')->name('stats');

@@ -21,6 +21,9 @@ mix.js([
     .js([
     'resources/assets/js/database.js',
     ], 'public/js/database.js')
+    .js([
+    'resources/assets/js/charts.js',
+    ], 'public/js/charts.js')
     .copy('resources/assets/images/', 'public/images/')
     .copy('resources/assets/js/global.js', 'public/js/global.js')
     .copy('node_modules/leaflet/dist/', 'public/vendor/leaflet/')

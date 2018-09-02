@@ -15,4 +15,9 @@ class PageController extends Controller
     {
         return view('database');
     }
+
+    public function stats(Request $request)
+    {
+        return view('stats-'.$request->page);
+    }
 }

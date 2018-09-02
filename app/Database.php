@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use DB;
 
 class Database extends Model
 {
@@ -14,6 +15,10 @@ class Database extends Model
         return $total;
     }
      */
+    public function getRegistrationAttribute()
+    {
+        return (int) $this->attributes['22480946'];
+    }
 
     public function locations()
     {
@@ -51,13 +56,23 @@ class Database extends Model
             '22480946', 
             'identifier',
             '26390924',
+            DB::raw('(`23430922` + `28390924`) as total_students'),
             '28390924 as s_girls',
             '23430922 as s_boys',
-            '20490967 as t_toilet',
+            DB::raw('(`20490967` + `22530927` + `27360922`) as t_toilets'),
             '20510942 as s_toilet',
             '22530927 as t_girls',
             '27360922 as t_boys'
         );
+    }
+
+    public function toilets()
+    {
+        return $this->select(
+            DB::raw('(`20490967` + `22530927` + `27360922`) as t_toilets'),
+            '22530927 as t_girls',
+            '27360922 as t_boys'
+        )->get();
     }
 
 }

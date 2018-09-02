@@ -56,20 +56,15 @@ class ApiController extends Controller
                 ;
             })->addColumn('t_students', function($data) {
                 return ((int) $data->s_girls + (int) $data->s_boys);
-            })->addColumn('t_toilets', function($data) {
-                if ($data->s_toilet === "Yes"){
-                   return ((int) $data->t_girls + (int) $data->t_girls);
-                }
-                return ((int) $data->t_toilet);
             })->addColumn('bg_toilet', function($data) {
                 if ($data->s_toilet === "Yes"){
-					//$b = "<i class='fa fa-male'></i>".(string)(int)$data->t_boys."  ";
-					//$g = "<i class='fa fa-female'></i>".(string)(int)$data->t_girls;
-					return "Yes";
-                }
-                return "No";
-            })
-            ->make(true);
+                    $tboys ='<i class="fa fa-male"></i> '.$data->t_boys;
+                    $tgirls ='<i class="fa fa-female"></i> '.$data->t_girls;
+					return $tboys.' '.$tgirls;
+                };
+                return '<i style="color:red" class="fa fa-exclamation-circle"></i>';
+            })->rawColumns(['bg_toilet'])
+                ->make(true);
     }
 
 }

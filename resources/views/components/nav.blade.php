@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="#"><img src="{{asset('images/logo/unicef-logo.png')}}" height="25"></a>
+    <a class="navbar-brand" href="{{route('landing')}}"><img src="{{asset('images/logo/unicef-logo.png')}}" height="25"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
         aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <i class="fas fa-bars"></i>
@@ -7,21 +7,20 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="{{route('landing')}}">Home
-                <span class="sr-only">(current)</span></a>
+            <li class="nav-item {{ Request::is('/') ? "active" : "" }}">
+                <a class="nav-link" href="{{route('landing')}}">Home</a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item {{ Request::is('database') ? "active" : "" }}">
                 <a class="nav-link" href="{{route('database')}}">Database</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">Stats</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown01">
-                    <a class="dropdown-item" href="#">Water Supply</a>
-                    <a class="dropdown-item" href="#">Sanitation</a>
-                    <a class="dropdown-item" href="#">Hygiene</a>
-                    <a class="dropdown-item" href="#">Management</a>
+                    <?php $pages = ['Management', 'Hygiene','Water Supply', 'Sanitation']; ?> 
+                    @foreach ($pages as $page)
+                        <a class="dropdown-item" href="{{ route('stats',['page'=>$page]) }}">{{$page}}</a>
+                    @endforeach
                 </div>
             </li>
         </ul>

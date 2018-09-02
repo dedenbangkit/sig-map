@@ -7,8 +7,8 @@ $(btn4).removeAttr('onclick');
 function icon(fa){
     return "<i class='fas fa-"+fa+"'></i>";
 }
-function col(id){
-    return {data:id,name:id};
+function col(id, order){
+    return {data:id,name:id, orderable:order};
 }
 
 $.ajaxSetup({
@@ -27,14 +27,13 @@ var data_table = $('#school_table').DataTable({
 		method: 'POST'
 	},
 	columns: [
-        col('identifier'),
-        col('22480946'),
-        col('28390923'),
-        col('23430921'),
-        col('26390924'),
-        col('t_students'),
-        col('t_toilets'),
-        col('bg_toilet'),
+        col('identifier', true),
+        col('22480946', true),
+        col('28390923', true),
+        col('26390924', true),
+        col('total_students', true),
+        col('t_toilets', true),
+        col('bg_toilet', false),
 	],
     lengthMenu: [
         [ 10, 25, 50, 100, -1 ],

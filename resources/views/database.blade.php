@@ -6,9 +6,8 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Registration</th>
+                <th>Reg</th>
                 <th>School</th>
-                <th>Type</th>
                 <th>Class</th>
                 <th>Students</th>
                 <th>Toilets</th>

@@ -16,8 +16,12 @@ mix.js([
     ], 'public/js/app.js')
     .js([
     'resources/assets/js/cluster.js',
-    'resources/assets/js/map.js',
-    ], 'public/js/map.js')
+    'resources/assets/js/test.js',
+    ], 'public/js/test.js')
+    .js([
+    'resources/assets/js/cluster.js',
+    'resources/assets/js/maps.js',
+    ], 'public/js/maps.js')
     .js([
     'resources/assets/js/database.js',
     ], 'public/js/database.js')

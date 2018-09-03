@@ -20,10 +20,47 @@ class Database extends Model
         return (int) $this->attributes['22480946'];
     }
 
+    public function maps()
+    {
+        $db = collect($this->all(
+            'longitude',
+            'latitude',
+			'identifier as id',
+            '28390923 as school_name', 
+            '20510942 as separated', 
+            '22490945 as has_toilets' 
+		))->map(function($data) {
+			$toilet = '1';
+			if ($data->has_toilets === 'Yes')
+			{
+				$toilet = '5';
+			}
+			if($data->separated === 'Yes')
+			{
+				$toilet = '4';
+			}
+			$results = array(
+                'geometry' => array(
+                    'type' => 'Point',
+                    'coordinates' => array((float)$data->longitude, (float)$data->latitude),
+                ),
+                'type' => 'Feature',
+                'properties' => array(
+                    'school_name' => $data->school_name,
+                    'school_id' => $data->school_name,
+                    'has_toilet' => $data->has_toilet,
+                    'toilets' => $toilet,
+                )
+			);
+			return $results;
+		});
+		return $db;
+    }
+
     public function locations()
     {
         $db = collect($this->all('longitude','latitude','identifier', 'display_name'))->map(function($data) {
-            $results = Array( 
+            $results = array( 
                 'latlng' => [(float) $data->latitude, (float) $data->longitude],
                 'id' => $data->identifier,
                 'name' => $data->display_name

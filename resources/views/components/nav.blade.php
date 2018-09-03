@@ -17,9 +17,9 @@
                 <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">Stats</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown01">
-                    <?php $pages = ['Management', 'Hygiene','Water Supply', 'Sanitation']; ?> 
+                    <?php $pages = ['management', 'hygiene','water_supply', 'sanitation']; ?> 
                     @foreach ($pages as $page)
-                        <a class="dropdown-item" href="{{ route('stats',['page'=>$page]) }}">{{$page}}</a>
+                        <a class="dropdown-item" href="{{ route('stats',['page'=>$page]) }}">{{ucfirst(str_replace('_',' ',$page))}}</a>
                     @endforeach
                 </div>
             </li>

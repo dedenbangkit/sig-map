@@ -256,3 +256,135 @@ tbody tr:hover{
     padding: 5px;
     text-align: center;
 }
+
+/* maps */
+#legend {
+    position: absolute;
+    top: 60px;
+    right: 0px;
+    margin: 10px;
+    padding: 5px;
+    font-size: 12px;
+    font-family: inherit;
+    width: 120px;
+    background: rgb(255, 255, 255);
+    z-index: 1000;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.17);
+}
+.legendheading {
+    position: relative;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.legenditem {
+    padding: 5px;
+    margin-bottom: 0px;
+    color: white;
+}
+
+/*Marker clusters*/
+.marker-cluster-pie g.arc{
+  fill-opacity: 0.5;
+}
+.marker-cluster-pie-label {
+    font-family: inherit;
+    font-size: x-small;
+    font-weight: inherit;
+}
+
+/*Markers*/
+.marker {
+  width: 18px;
+  height: 18px;
+  border-width: 2px;
+  border-radius:10px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-style: solid;
+  fill: #CCC;
+  stroke: #444;
+  background: #CCC;
+  border-color: #444;
+}
+.marker div{
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: sans-serif;
+}
+
+/*marker categories*/
+.category-1{
+  fill: #dc3545;
+  stroke: #800;
+  background: #dc3545;
+  border-color: #800;
+}
+.category-2{
+  fill: #FA0;
+  stroke: #B60;
+  background: #FA0;
+  border-color: #B60;
+}
+.category-3{
+  fill: #ffc107;
+  stroke: #D80;
+  background: #ffc107;
+  border-color: #D80;
+}
+.category-4{
+  fill: #28a745;
+  stroke: #070;
+  background: #28a745;
+  border-color: #070;
+}
+.category-5{
+  fill: #007bff;
+  stroke: #054e9c;
+  background: #007bff;
+  border-color: #054e9c;
+}
+.category-6{
+  fill: #6c757d;
+  stroke: #444;
+  background: #6c757d;
+  border-color: #444;
+}
+
+/*marker icons*/
+.icon-1{
+  background-repeat: no-repeat;
+  background-position: 0px 1px;
+}
+.icon-2{
+  background-repeat: no-repeat;
+  background-position: 1px 0px;
+}
+.icon-3{
+  background-repeat: no-repeat;
+  background-position: 1px 0px;
+}
+.icon-4{
+  background-repeat: no-repeat;
+  background-position: 1px 0px;
+}
+.leaflet-marker-icon.marker-cluster svg{
+	border-radius:100%;
+	background:rgba(255, 255, 255, 0.68);
+}
+
+/*Popup*/
+.map-popup span.heading {
+  display: block;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+.map-popup span.attribute {
+  display: block;
+}
+.map-popup span.label {
+  font-weight: bold;
+}

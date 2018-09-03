@@ -67,4 +67,41 @@ class ApiController extends Controller
                 ->make(true);
     }
 
+    public function getGeoJson(Request $request, DB $db)
+    {
+        $features = $db->maps(); 
+        $properties = array(
+			'school_name' => array(
+				'name'=>"School Name"
+			),
+			'school_id' => array(
+				'name'=>"ID"
+			),
+			'has_toilet' => array(
+				'lookup'=> array(
+					'Yes'=>'1',
+					'No'=>'2',
+				),
+				'name' => 'Has Toilets'
+			),
+			'toilets' => array(
+				'lookup'=> array(
+					'1'=>'No Toilet',
+					'4'=>'Private',
+					'5'=>'Shared',
+				),
+				'name' => 'Toilets'
+			)
+        );
+        return array(
+            'type' => 'FeatureCollection',
+            'features' => $features,
+            'properties' => array(
+                'fields' => $properties,
+                'attribution' => 'Traffic Accidents',
+                'description' => 'Traffic Accidents Description'
+            )
+        );
+    }
+
 }

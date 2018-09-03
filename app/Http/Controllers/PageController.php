@@ -8,7 +8,12 @@ class PageController extends Controller
 {
     public function index(Request $request)
     {
-        return view('index');
+        return view('maps');
+    }
+
+    public function test(Request $request)
+    {
+        return view('test');
     }
 
     public function database(Request $request)

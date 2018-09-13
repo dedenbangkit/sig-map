@@ -50,8 +50,13 @@ function getDetails(a, atype) {
 					let body;
 					var str = data[key];
                     if(!isNaN(str)){
-                        key = "<i class='fas fa-hashtag'></i> " + key;
-						body = "<div class='badge badge-warning'>" + str + "</div>";
+                        if (str < 1){
+                            key = "<i class='fas fa-exclamation circle'></i> " + key;
+                            body = "<div class='badge badge-secondary'>Not Answering</div>";
+                        } else {
+                            key = "<i class='fas fa-hashtag'></i> " + key;
+                            body = "<div class='badge badge-warning'>" + str + "</div>";
+                        }
                     } else if (str.startsWith("https://")){
 						body = "<img src='"+data[key]+"' class='img-fluid img-thumbnail rounded'>";
                         key = "<i class='fas fa-camera'></i> " + key;
@@ -65,10 +70,10 @@ function getDetails(a, atype) {
                         key = "<i class='fas fa-align-justify'></i> " + key;
 						body = "<div class='badge badge-primary'>" + str + "</div>";
 					}
-					$('#school_desc').append(
-						"<div class='card card-custom'><div class='card-body'><div class='card-title'>" +
-						key + "</div><div class='card-text'>" + body + "</div></div></div>"
-					);
+                    $('#school_desc').append(
+                        "<div class='card card-custom'><div class='card-body'><div class='card-title'>" +
+                        key + "</div><div class='card-text'>" + body + "</div></div></div>"
+                    );
 				};
 			}
 		});
@@ -120,6 +125,7 @@ function autoAnswer() {
 }
 
 function focusTo() {
+    event.preventDefault()
     let latlng = $('#zoom_find').val();
     let id= $('#find').attr('data-search');
     latlng = latlng.split(',');
@@ -157,8 +163,15 @@ function jqUI(){
     };
 }
 
+function toggleLegend(it, state) {
+    let rem_class = $(it).attr('class');
+    $('.marker.'+rem_class).hide();
+}
+
+
 /*
  *
  * Global Database Function
  *
  */
+

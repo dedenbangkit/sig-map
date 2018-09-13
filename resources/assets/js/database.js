@@ -7,8 +7,8 @@ $(btn4).removeAttr('onclick');
 function icon(fa){
     return "<i class='fas fa-"+fa+"'></i>";
 }
-function col(id, order){
-    return {data:id,name:id, orderable:order};
+function col(id, order, searchable){
+    return {data:id,name:id,orderable:order,searchable:searchable};
 }
 
 $.ajaxSetup({
@@ -27,13 +27,13 @@ var data_table = $('#school_table').DataTable({
 		method: 'POST'
 	},
 	columns: [
-        col('identifier', true),
-        col('22480946', true),
-        col('28390923', true),
-        col('26390924', true),
-        col('total_students', true),
-        col('t_toilets', true),
-        col('bg_toilet', false),
+        col('identifier', true, true),
+        col('22480946', true, true),
+        col('28390923', true, true),
+        col('26390924', true, true),
+        col('total_students', true, false),
+        col('t_toilets', true, false),
+        col('bg_toilet', false, false),
 	],
     lengthMenu: [
         [ 10, 25, 50, 100, -1 ],
@@ -76,6 +76,7 @@ $(btn4).on('click', function () {
 });
 
 $(frm).on('submit', function() {
+    event.preventDefault()
 	searchTable();
 });
 

@@ -25,7 +25,7 @@ class Database extends Model
         $db = collect($this->all(
             'longitude',
             'latitude',
-			'identifier as id',
+			'identifier',
             '28390923 as school_name', 
             '20510942 as separated', 
             '22490945 as has_toilets' 
@@ -47,7 +47,7 @@ class Database extends Model
                 'type' => 'Feature',
                 'properties' => array(
                     'school_name' => $data->school_name,
-                    'school_id' => $data->school_name,
+                    'school_id' => $data->identifier,
                     'has_toilet' => $data->has_toilet,
                     'toilets' => $toilet,
                 )

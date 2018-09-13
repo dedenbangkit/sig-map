@@ -27,8 +27,8 @@
 		<div class="form-inline my-2 my-lg-0">
 				<form onsubmit="focusTo()" id="stack_search">
 					<a href="#" onclick="focusNormal()" class="mp-btn btn btn-light my-2 my-sm-0"><i class="fa fa-expand"></i></a>
-					<a href="#" onclick="maps.zoomIn()" class="mp-btn btn btn-light my-2 my-sm-0"><i class="fa fa-search-minus"></i></a>
-					<a href="#" onclick="maps.zoomOut()" class="mp-btn btn btn-light my-2 my-sm-0"><i class="fa fa-search-plus"></i></a>
+					<a href="#" onclick="maps.zoomOut()" class="mp-btn btn btn-light my-2 my-sm-0"><i class="fa fa-search-minus"></i></a>
+					<a href="#" onclick="maps.zoomIn()" class="mp-btn btn btn-light my-2 my-sm-0"><i class="fa fa-search-plus"></i></a>
 					<input id="find" onkeydown="jqUI()" type="text" placeholder="Search School" class="form-control mr-sm-2">
 					<input id="zoom_find" type="hidden">
 					<input type="submit" id="find_submit" style="position: absolute; left: -9999px"/>

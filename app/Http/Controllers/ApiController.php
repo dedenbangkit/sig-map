@@ -69,7 +69,7 @@ class ApiController extends Controller
 
     public function getGeoJson(Request $request, DB $db)
     {
-        $features = $db->maps(); 
+        $features = $db->maps($request->id); 
         $properties = array(
 			'school_name' => array(
 				'name'=>"School Name"
@@ -103,5 +103,4 @@ class ApiController extends Controller
             )
         );
     }
-
 }

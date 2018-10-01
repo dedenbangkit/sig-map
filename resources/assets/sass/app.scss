@@ -284,6 +284,12 @@ tbody tr:hover{
     margin-bottom: 0px;
     color: white;
 }
+.legenditem:before{
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    padding-right: 10px;
+    content: "\f00c";
+}
 
 /*Marker clusters*/
 .marker-cluster-pie g.arc{
@@ -352,6 +358,15 @@ tbody tr:hover{
   stroke: #444;
   background: #6c757d;
   border-color: #444;
+}
+.inactive-legend {
+    background: #222;
+}
+.inactive-legend:before{
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    padding-right: 10px;
+    content: "\f057";
 }
 
 /*marker icons*/

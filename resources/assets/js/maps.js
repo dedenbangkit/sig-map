@@ -197,8 +197,35 @@ function renderLegend() {
         .attr('class', function(d) {
             return 'category-' + d.key;
         })
-        .attr('onclick', function(d){
-            return 'restartCluster(this,'+d.key+')';
+        .on('click', function(d){
+			$('.leaflet-marker-icon').remove();
+			map.removeLayer(markerclusters);
+			if( $(this).hasClass('inactive-legend') ){
+				$(this).removeClass('inactive-legend');
+				var gpath = '/api/geojson/';
+			}else{
+				$(this).addClass('inactive-legend');
+				var gpath = '/api/geojson/' + d.key;
+			};
+			markerclusters = L.markerClusterGroup({
+				maxClusterRadius: 2 * rmax,
+				iconCreateFunction: defineClusterIcon //this is where the magic happens
+			});
+    		map.addLayer(markerclusters);
+            d3.json(gpath, function(error, dt) {
+                if (!error) {
+                    geojson = dt;
+                    metadata = dt.properties;
+                    var markers = L.geoJson(geojson, {
+                        pointToLayer: defineFeature,
+                        onEachFeature: defineFeaturePopup
+                    });
+                    markerclusters.addLayer(markers);
+                    map.attributionControl.addAttribution(metadata.attribution);
+                } else {
+                    console.log('Could not load data...');
+                }
+            });
         })
         .classed({
             'legenditem': true
@@ -216,21 +243,6 @@ function serializeXmlNode(xmlNode) {
         return xmlNode.xml;
     }
     return "";
-}
-
-
-function restartCluster() {
-    maps.removeLayer(markerclusters);
-    geojsonPath = '/api/geojson';
-    categoryField = 'toilets';
-    iconField = 'toilets';
-    popupFields = ['school_name', 'school_id', 'has_toilet'];
-    rmax = 30, //Maximum radius for cluster pies
-    markerclusters = L.markerClusterGroup({
-        maxClusterRadius: 2 * rmax,
-        iconCreateFunction: defineClusterIcon //this is where the magic happens
-    }),
-    maps.addLayer(markerclusters);
 }
 
 maps = map;

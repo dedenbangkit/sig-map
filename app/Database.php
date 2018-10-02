@@ -39,7 +39,7 @@ class Database extends Model
 			{
 				$toilet = '4';
 			}
-            if ($excepts === $toilet){
+            if (in_array($toilet, $excepts)){
                 return;
             }
 			$results = array(

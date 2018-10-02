@@ -31,7 +31,7 @@ map.addLayer(markerclusters);
 
 //Ready to go, load the geojson
 d3.json(geojsonPath, function(error, data) {
-    localStorage.setItem('data',JSON.stringify(data));
+    localStorage.setItem('data', JSON.stringify(data));
     var retrievedObject = localStorage.getItem('data');
     data = JSON.parse(retrievedObject);
     if (!error) {
@@ -205,10 +205,24 @@ function renderLegend() {
             if ($(this).hasClass('inactive-legend')) {
                 $(this).removeClass('inactive-legend');
                 var gpath = '/api/geojson/';
+                if ($('.inactive-legend').length >= 1) {
+                    var inactive = $('.inactive-legend').attr('class').split(' ')[0];
+                    gpath = '/api/geojsonfiltered/' + inactive;
+                }
             } else {
                 $(this).addClass('inactive-legend');
-                var gpath = '/api/geojson/' + d.key;
+                var gpath = '/api/geojsonfiltered/category-' + d.key;
             };
+            if ($('.inactive-legend').length > 1) {
+                var multi = [];
+                $('.inactive-legend').each(function(a, d) {
+                    var inactive = $(this).attr('class').split(' ')[0];
+                    inactive = inactive.split('-')[1];
+                    multi.push(inactive);
+                });
+                multi = multi.join('-');
+                gpath = '/api/geojsonmulti/' + multi;
+            }
             map.removeLayer(markerclusters);
             /* markerclusters.eachLayer(function (ld) {
                 if (d.key === ld.feature.properties.toilets){
@@ -222,8 +236,8 @@ function renderLegend() {
             });
             map.addLayer(markerclusters);
             d3.json(gpath, function(error, dt) {
-                localStorage.setItem('data-'+d.key,JSON.stringify(dt));
-                var retrievedObject = localStorage.getItem('data-'+d.key);
+                localStorage.setItem('data-' + d.key, JSON.stringify(dt));
+                var retrievedObject = localStorage.getItem('data-' + d.key);
                 dt = JSON.parse(retrievedObject);
                 if (!error) {
                     geojson = dt;

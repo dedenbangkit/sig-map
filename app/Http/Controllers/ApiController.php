@@ -93,14 +93,15 @@ class ApiController extends Controller
 				'name' => 'Toilets'
 			)
         );
-        return array(
+        $data = array(
             'type' => 'FeatureCollection',
             'features' => $features,
             'properties' => array(
                 'fields' => $properties,
-                'attribution' => 'Traffic Accidents',
-                'description' => 'Traffic Accidents Description'
+                'attribution' => 'Toilet Type',
+                'description' => 'Toilet Description'
             )
         );
+        return $data;
     }
 }

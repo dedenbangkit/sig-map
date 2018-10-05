@@ -18,7 +18,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::get('/params','ApiController@getParams');
 Route::get('/locations','ApiController@getLocation');
-Route::get('/geojson','ApiController@getGeoJson');
 Route::get('/geojson/','ApiController@getGeoJson');
 Route::get('/geojsonfiltered/{id}','ApiController@getGeoJsonFiltered');
 Route::get('/geojsonmulti/{ids}','ApiController@getGeoJsonMultiple');
@@ -26,3 +25,4 @@ Route::get('/details/{id}','ApiController@getDetail');
 Route::get('/search/{q}','ApiController@searchData');
 Route::post('/database','ApiController@getDataTables');
 Route::get('/toilets','ChartsController@getTotalToilet');
+Route::get('/caches','ApiController@getCache');

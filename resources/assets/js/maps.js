@@ -9,7 +9,7 @@ var tileServer = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 
 var geojson,
     metadata,
-    geojsonPath = '/api/geojson',
+    geojsonPath = '/api/geojson/',
     categoryField = 'toilets',
     iconField = 'toilets',
     popupFields = ['school_name', 'school_id', 'has_toilet'],
@@ -19,6 +19,7 @@ var geojson,
         iconCreateFunction: defineClusterIcon //this is where the magic happens
     }),
     map = L.map('mapid').setView([-8.19, 158.55], 7);
+
 
 //Add basemap
 L.tileLayer(tileServer, {
@@ -236,9 +237,6 @@ function renderLegend() {
             });
             map.addLayer(markerclusters);
             d3.json(gpath, function(error, dt) {
-                localStorage.setItem('data-' + d.key, JSON.stringify(dt));
-                var retrievedObject = localStorage.getItem('data-' + d.key);
-                dt = JSON.parse(retrievedObject);
                 if (!error) {
                     geojson = dt;
                     metadata = dt.properties;

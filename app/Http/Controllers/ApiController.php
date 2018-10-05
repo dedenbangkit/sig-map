@@ -76,7 +76,7 @@ class ApiController extends Controller
         }
         $features = $db->maps([0]); 
         $data = $this->getFeatures($features);
-        Cache::put('all-geojson', $data);
+        Cache::add('all-geojson', $data, 60);
         return $data;
     }
 
@@ -89,7 +89,7 @@ class ApiController extends Controller
         list($filter, $ids) = explode('-',$request->id);
         $features = $db->maps([$ids]); 
         $data = $this->getFeatures($features);
-        Cache::put('filter-geojson-'.$request->id, $data);
+        Cache::add('filter-geojson-'.$request->id, $data, 60);
         return $data;
     }
 
@@ -102,8 +102,12 @@ class ApiController extends Controller
         $ids = explode('-',$request->ids);
         $features = $db->maps($ids); 
         $data = $this->getFeatures($features);
-        Cache::put('filter-geojson-'.$request->id, $data);
+        Cache::add('filter-multiple-geojson-'.$request->ids, $data, 60);
         return $data;
+    }
+
+    public function getCache(Request $request)
+    {
     }
 
     private function getFeatures($features)

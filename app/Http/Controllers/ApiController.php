@@ -74,43 +74,9 @@ class ApiController extends Controller
             $data = Cache::get('all-geojson');
             return $data;
         }
-        $features = $db->maps([0]); 
+        $features = $db->maps(); 
         $data = $this->getFeatures($features);
         Cache::put('all-geojson', $data, 60);
-        return $data;
-    }
-
-    public function getGeoJsonFiltered(Request $request, DB $db)
-    {
-        list($filter, $ids) = explode('-',$request->id);
-        if (Cache::has('all-geojson')) {
-            $data = Cache::get('all-geojson');
-        }else{
-            $features = $db->maps([0]); 
-            $data = $this->getFeatures($features);
-            Cache::put('all-geojson', $data, 60);
-        }
-        $features = collect($data["features"])->filter(function($values, $keys) use ($ids) {
-            return $values["properties"]["toilets"] !== $ids;
-        });
-        $data["features"] = $features->filter()->values();
-        return $data;
-    }
-
-    public function getGeoJsonMultiple(Request $request, DB $db)
-    {
-        $ids = explode('-',$request->ids);
-        if (Cache::has('all-geojson')) {
-            $data = Cache::get('all-geojson');
-        }else{
-            $features = $db->maps([0]); 
-            $data = $this->getFeatures($features);
-            Cache::put('all-geojson', $data, 60);
-        }
-        $features = collect($data["features"])->filter(function($values, $keys) use ($ids) {
-            return !in_array($values["properties"]["toilets"],$ids);
-        });
-        $data["features"] = $features->filter()->values();
         return $data;
     }
 
@@ -123,21 +89,22 @@ class ApiController extends Controller
 			'school_id' => array(
 				'name'=>"ID"
 			),
-			'has_toilet' => array(
+			'water-source' => array(
 				'lookup'=> array(
-					'Yes'=>'1',
-					'No'=>'2',
+					'1'=>'No Water',
+					'4'=>'Has Water',
+					'5'=>'Safe to Drink',
 				),
-				'name' => 'Has Toilets'
+				'name' => 'Water Source'
 			),
-			'toilets' => array(
+			'toilet-type' => array(
 				'lookup'=> array(
 					'1'=>'No Toilet',
 					'4'=>'Private',
 					'5'=>'Shared',
 				),
 				'name' => 'Toilets'
-			)
+			),
         );
         $data = array(
             'type' => 'FeatureCollection',
@@ -145,12 +112,11 @@ class ApiController extends Controller
             'properties' => array(
                 'fields' => $properties,
                 'attribution' => array(
-                    'id' => 'toilet-type',
-                    'name' => 'Toilet Type'
+                    'id' => 'water-source',
+                    'name' => 'Water Source'
                 ),
                 'attributes' => [
                     array('id'=>'toilet-type', 'name'=>'Toilet Type'),
-                    array('id'=>'water-sink', 'name'=>'Water Sink'),
                     array('id'=>'water-source', 'name'=>'Water Source')
                 ],
                 'description' => 'Toilet Description'

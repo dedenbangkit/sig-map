@@ -184,15 +184,32 @@ function bakeThePie(options) {
     //Return the svg-markup rather than the actual element
     return serializeXmlNode(svg);
 }
+/*Function for generating indicators options
 
 /*Function for generating a legend with the same categories as in the clusterPie*/
 function renderLegend() {
     var data = d3.entries(metadata.fields[categoryField].lookup),
         legenddiv = d3.select('body').append('div')
         .attr('id', 'legend');
+    var indicators = d3.entries(metadata.attributes);
+    $('#legend').append('<select class="custom-select" id="indicators"></select>');
+    indicators.forEach(function(x){
+        var selected = '';
+        if (x.value.id == metadata.attribution.id){
+            selected = 'selected';
+        }
+        $('#indicators').append('<option value="'+x.value.id+'" '+ selected +'>'+x.value.name+'</options>');
+    });
+    $('#legend').append('<hr>');
+    var dropdown = d3.select('#indicators');
+    dropdown
+        .on('change', function(a) {
+            legenditems.remove();
+            $('.leaflet-marker-icon').remove();
+        })
     var heading = legenddiv.append('div')
         .classed('legendheading', true)
-        .text(metadata.fields[categoryField].name);
+        .text(metadata.attribution.name);
     var legenditems = legenddiv.selectAll('.legenditem')
         .data(data);
     legenditems

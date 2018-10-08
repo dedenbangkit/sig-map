@@ -76,38 +76,42 @@ class ApiController extends Controller
         }
         $features = $db->maps([0]); 
         $data = $this->getFeatures($features);
-        Cache::add('all-geojson', $data, 60);
+        Cache::put('all-geojson', $data, 60);
         return $data;
     }
 
     public function getGeoJsonFiltered(Request $request, DB $db)
     {
-        if (Cache::has('filter-geojson-'.$request->id)) {
-            $data = Cache::get('filter-geojson-'.$request->id);
-            return $data;
-        }
         list($filter, $ids) = explode('-',$request->id);
-        $features = $db->maps([$ids]); 
-        $data = $this->getFeatures($features);
-        Cache::add('filter-geojson-'.$request->id, $data, 60);
+        if (Cache::has('all-geojson')) {
+            $data = Cache::get('all-geojson');
+        }else{
+            $features = $db->maps([0]); 
+            $data = $this->getFeatures($features);
+            Cache::put('all-geojson', $data, 60);
+        }
+        $features = collect($data["features"])->filter(function($values, $keys) use ($ids) {
+            return $values["properties"]["toilets"] !== $ids;
+        });
+        $data["features"] = $features->filter()->values();
         return $data;
     }
 
     public function getGeoJsonMultiple(Request $request, DB $db)
     {
-        if (Cache::has('filter-multiple-geojson-'.$request->ids)) {
-            $data = Cache::get('filter-multiple-geojson-'.$request->ids);
-            return $data;
-        }
         $ids = explode('-',$request->ids);
-        $features = $db->maps($ids); 
-        $data = $this->getFeatures($features);
-        Cache::add('filter-multiple-geojson-'.$request->ids, $data, 60);
+        if (Cache::has('all-geojson')) {
+            $data = Cache::get('all-geojson');
+        }else{
+            $features = $db->maps([0]); 
+            $data = $this->getFeatures($features);
+            Cache::put('all-geojson', $data, 60);
+        }
+        $features = collect($data["features"])->filter(function($values, $keys) use ($ids) {
+            return !in_array($values["properties"]["toilets"],$ids);
+        });
+        $data["features"] = $features->filter()->values();
         return $data;
-    }
-
-    public function getCache(Request $request)
-    {
     }
 
     private function getFeatures($features)
@@ -140,7 +144,15 @@ class ApiController extends Controller
             'features' => $features,
             'properties' => array(
                 'fields' => $properties,
-                'attribution' => 'Toilet Type',
+                'attribution' => array(
+                    'id' => 'toilet-type',
+                    'name' => 'Toilet Type'
+                ),
+                'attributes' => [
+                    array('id'=>'toilet-type', 'name'=>'Toilet Type'),
+                    array('id'=>'water-sink', 'name'=>'Water Sink'),
+                    array('id'=>'water-source', 'name'=>'Water Source')
+                ],
                 'description' => 'Toilet Description'
             )
         );

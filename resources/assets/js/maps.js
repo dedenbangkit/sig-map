@@ -49,7 +49,7 @@ d3.json('/api/province', function(error, data) {
     d3.select('#province-list').append('button')
         .attr('class', 'btn')
         .attr('id', 'province-all')
-        .attr('data-select', 'add')
+        .attr('data-select', 'remove')
         .text('Disable All')
         .on('click', function(a) {
             filterProvince('options', 'all');

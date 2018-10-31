@@ -31,34 +31,34 @@ var provinceList;
 d3.json('/api/province', function(error, data) {
     provinceList = data;
     $('#stack_search').prepend('<a id="province-filter" class="btn btn-light mp-btn my-2 my-sm-0">Show Province</a>');
-    $('#province-filter').css('display','inline-block');
+    $('#province-filter').css('display', 'inline-block');
     d3.select('body').append('div').attr('id', 'province-list');
-    d3.select('#province-list').append('div').attr('class','legendprovince').text('Province');
+    d3.select('#province-list').append('div').attr('class', 'legendprovince').text('Province');
     d3.select('#province-list').append('hr');
     provinceList.forEach(function(x) {
         var provinceId = x.split(' ');
         provinceId = provinceId.join('_');
         d3.select('#province-list')
             .append('a')
-            .attr('id','province-'+provinceId)
+            .attr('id', 'province-' + provinceId)
             .text(x)
-            .on('click',function(a){
+            .on('click', function(a) {
                 filterProvince(x, provinceId);
             });
     });
     d3.select('#province-list').append('button')
         .attr('class', 'btn')
-        .attr('id','province-all')
+        .attr('id', 'province-all')
         .attr('data-select', 'add')
         .text('Disable All')
-        .on('click', function(a){
+        .on('click', function(a) {
             filterProvince('options', 'all');
         });
-    $('#province-filter').click(function(e){
+    $('#province-filter').click(function(e) {
         $('#province-list').toggle();
-        if($(this).text() === 'Show Province'){
+        if ($(this).text() === 'Show Province') {
             $(this).text('Hide Province');
-        }else{
+        } else {
             $(this).text('Show Province');
         }
 
@@ -67,40 +67,40 @@ d3.json('/api/province', function(error, data) {
 
 function filterProvince(provinceName, provinceId) {
     var dbs = JSON.parse(localStorage.getItem('data'));
-    if (provinceName === 'options'){
+    if (provinceName === 'options') {
         var dataSelection = $('#province-all').attr('data-select');
-        if (dataSelection === 'add'){
+        if (dataSelection === 'add') {
             $('#province-list > a').removeClass('inactive');
             $('#province-all').removeClass('enable-all');
             $('#province-all').text('Disable All');
-            $('#province-all').attr('data-select','remove');
-        }else{
+            $('#province-all').attr('data-select', 'remove');
+        } else {
             $('#province-list > a').addClass('inactive');
             $('#province-all').addClass('enable-all');
             $('#province-all').text('Enable All');
-            $('#province-all').attr('data-select','add');
+            $('#province-all').attr('data-select', 'add');
         }
     } else {
         $('#province-all').addClass('enable-all');
         $('#province-all').text('Enable All');
-        $('#province-all').attr('data-select','add');
+        $('#province-all').attr('data-select', 'add');
     }
     dbs["features"] = $.map(dbs.features, function(x) {
         x = x;
-        if (provinceName === 'options'){
-            if (dataSelection === 'add'){
+        if (provinceName === 'options') {
+            if (dataSelection === 'add') {
                 x.properties.master = 'active';
             } else {
                 x.properties.master = 'inactive';
             }
-        }else{
-            if (x.properties.province === provinceName){
+        } else {
+            if (x.properties.province === provinceName) {
                 if (x.properties.master === "active") {
                     x.properties.master = "inactive";
-                    $('#province-'+provinceId).addClass('inactive');
-                }else{
+                    $('#province-' + provinceId).addClass('inactive');
+                } else {
                     x.properties.master = "active";
-                    $('#province-'+provinceId).removeClass('inactive');
+                    $('#province-' + provinceId).removeClass('inactive');
                 }
             }
         }
@@ -109,28 +109,16 @@ function filterProvince(provinceName, provinceId) {
     localStorage.setItem('data', JSON.stringify(dbs));
     dbs = JSON.parse(localStorage.getItem('data'));
     metadata = dbs.properties;
-    if(metadata.attribution.type === 'num'){
-        $('#bar-legend').remove();
-        createHistogram();
-        categoryField = "neutral",
-            iconField = categoryField,
-            changeValue(dbs, []);
-    };
-    if (clustered) {
+    if (clustered === true) {
         map.removeLayer(markerclusters);
-        markerclusters = L.markerClusterGroup({
-            maxClusterRadius: 2 * rmax,
-            iconCreateFunction: defineClusterIcon
-        });
-        map.addLayer(markerclusters);
-        var markers = L.geoJson(dbs, {
-            pointToLayer: defineFeature,
-            onEachFeature: defineFeaturePopup
-        });
-        markerclusters.addLayer(markers);
-        map.attributionControl.addAttribution(metadata.attribution);
+        if (metadata.attribution.type === 'num'){
+            $('#bar-legend').remove();
+            createHistogram();
+        }else{
+            changeValue(dbs, getFilterData());
+        };
     } else {
-        map.removeLayer(markerclusters);
+        map.removeLayer(mkr);
         mkr = L.geoJson(dbs, {
             pointToLayer: defineFeature,
             onEachFeature: defineFeaturePopup
@@ -153,7 +141,7 @@ var geojson,
         maxClusterRadius: 2 * rmax,
         iconCreateFunction: defineClusterIcon //this is where the magic happens
     }),
-    map = L.map('mapid').setView([-8.3626894,160.3288342], 7);
+    map = L.map('mapid').setView([-8.3626894, 160.3288342], 7);
 
 //Add basemap
 L.tileLayer(tileServer, {
@@ -358,6 +346,8 @@ function renderLegend(database) {
             dbs.properties.attribution.type = this.value.split('$')[1];
             localStorage.setItem('data', JSON.stringify(dbs));
             $('#bar-legend').remove();
+            localStorage.removeItem('chartPos');
+            localStorage.removeItem('filterPos');
             if (dbs.properties.attribution.type === 'str') {
                 legenddiv.remove();
                 categoryField = selectedVal,
@@ -446,6 +436,7 @@ function changeValue(database, deletes) {
         markerclusters.addLayer(markers);
         map.attributionControl.addAttribution(metadata.attribution);
     } else {
+        map.removeLayer(mkr);
         mkr = L.geoJson(dbs, {
             pointToLayer: defineFeature,
             onEachFeature: defineFeaturePopup
@@ -460,14 +451,15 @@ function filterMaps(minVal, maxVal, attributeName) {
     dbs["features"] = $.map(dbs.features, function(x) {
         x = x;
         x.properties.status = "inactive";
-        if (x.properties[attributeName] > minVal && x.properties[attributeName] < maxVal) {
+        if (x.properties[attributeName] >= minVal && x.properties[attributeName] <= maxVal) {
             x.properties.status = "active";
         }
         return x;
     });
     localStorage.setItem('data', JSON.stringify(dbs));
+    geojson = dbs;
     metadata = dbs.properties;
-    if (clustered) {
+    if (clustered === true) {
         map.removeLayer(markerclusters);
         markerclusters = L.markerClusterGroup({
             maxClusterRadius: 2 * rmax,
@@ -481,7 +473,7 @@ function filterMaps(minVal, maxVal, attributeName) {
         markerclusters.addLayer(markers);
         map.attributionControl.addAttribution(metadata.attribution);
     } else {
-        map.removeLayer(markerclusters);
+        map.removeLayer(mkr);
         mkr = L.geoJson(dbs, {
             pointToLayer: defineFeature,
             onEachFeature: defineFeaturePopup
@@ -503,16 +495,19 @@ function createHistogram() {
             'master': x.properties['master']
         };
     });
-    barData = _.remove(barData, function(n){
+    barData = _.remove(barData, function(n) {
         return n.master === 'active';
     });
-    let dataGroup =_.groupBy(barData,'value');
-    let histogram = _.map(dataGroup, function(v, i){
-        return {'len':v.length,'val':v[0].value};
+    let dataGroup = _.groupBy(barData, 'value');
+    let histogram = _.map(dataGroup, function(v, i) {
+        return {
+            'len': v.length,
+            'val': v[0].value
+        };
     });
     histogram = _.orderBy(histogram, ['val', 'len'], ['asc', 'desc']);
     histogram = _.remove(histogram, function(n) {
-      return n.val !== 0;
+        return n.val !== 0;
     });
     var barlegenddiv = d3.select('body').append('div')
         .attr('id', 'bar-legend');
@@ -522,20 +517,28 @@ function createHistogram() {
     $('.legenditem').remove();
     $('.legendheading').remove();
     $('#legend > hr').remove();
-	$('#legend').css('box-shadow','None');
-	$('#legend').css('-webkit-box-shadow','None');
+    $('#legend').css('box-shadow', 'None');
+    $('#legend').css('-webkit-box-shadow', 'None');
     var dom = document.getElementById("bar-legend");
     var myChart = echarts.init(dom);
     var app = {};
+    var chartPos = JSON.parse(localStorage.getItem('chartPos'));
+    if (chartPos === null) {
+        chartPos = [0, 100];
+        filterMaps(0, 100, attr_name);
+    }else{
+        let filterPos = JSON.parse(localStorage.getItem('filterPos'));
+        filterMaps(filterPos[0], filterPos[1], attr_name);
+    }
     var barOption = {
         title: {
             align: 'left',
-			textStyle: {
-				fontFamily:'Roboto',
-			},
-            text: dbs.properties.attribution.name.replace('_',' ').toUpperCase(),
+            textStyle: {
+                fontFamily: 'Roboto',
+            },
+            text: dbs.properties.attribution.name.replace('_', ' ').toUpperCase(),
         },
-		tooltip: {
+        tooltip: {
             trigger: 'axis',
             position: function(pt) {
                 return [pt[0], '100%'];
@@ -554,11 +557,11 @@ function createHistogram() {
         },
         dataZoom: [{
             type: 'inside',
-            start: 0,
-            end: 100
+            start: chartPos[0],
+            end: chartPos[1]
         }, {
-            start: 0,
-            end: 100,
+            start: chartPos[0],
+            end: chartPos[1],
             handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
             handleSize: '100%',
             handleStyle: {
@@ -586,11 +589,14 @@ function createHistogram() {
     if (barOption && typeof barOption === "object") {
         myChart.setOption(barOption, true);
     }
-    myChart.on('dataZoom', function(a){
+    myChart.on('dataZoom', function(a) {
         var axis = myChart.getModel().option.xAxis[0];
         var minVal = axis.data[axis.rangeStart];
         var maxVal = axis.data[axis.rangeEnd];
-        filterMaps(minVal,maxVal, attr_name);
+        var newPos = [a.start, a.end];
+        localStorage.setItem('chartPos', JSON.stringify(newPos));
+        localStorage.setItem('filterPos', JSON.stringify([minVal, maxVal]))
+        filterMaps(minVal, maxVal, attr_name);
     });
 }
 

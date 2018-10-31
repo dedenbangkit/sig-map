@@ -24,8 +24,8 @@ $('#change-cluster').on('click', function() {
     }
 });
 
-var tileServer = 'https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}{r}.png',
-    tileAttribution = 'Tiles © Wikimedia — Source: Wikimedia, Data: Unicef Pacific WASH, <a href="https://akvo.org">Akvo SEAP</a>';
+var tileServer = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    tileAttribution = 'Tiles © Wikimedia — Source: OpenStreetMap, Data: Unicef Pacific WASH, <a href="https://akvo.org">Akvo SEAP</a>';
 
 var provinceList;
 d3.json('/api/province', function(error, data) {
@@ -33,12 +33,11 @@ d3.json('/api/province', function(error, data) {
     $('#stack_search').prepend('<a id="province-filter" class="btn btn-light mp-btn my-2 my-sm-0">Show Province</a>');
     $('#province-filter').css('display','inline-block');
     d3.select('body').append('div').attr('id', 'province-list');
-    d3.select('#province-list').append('div').attr('class','legendheading').text('Province');
+    d3.select('#province-list').append('div').attr('class','legendprovince').text('Province');
     d3.select('#province-list').append('hr');
     provinceList.forEach(function(x) {
         var provinceId = x.split(' ');
         provinceId = provinceId.join('_');
-        console.log(provinceId);
         d3.select('#province-list')
             .append('a')
             .attr('id','province-'+provinceId)
@@ -47,6 +46,14 @@ d3.json('/api/province', function(error, data) {
                 filterProvince(x, provinceId);
             });
     });
+    d3.select('#province-list').append('button')
+        .attr('class', 'btn')
+        .attr('id','province-all')
+        .attr('data-select', 'add')
+        .text('Disable All')
+        .on('click', function(a){
+            filterProvince('options', 'all');
+        });
     $('#province-filter').click(function(e){
         $('#province-list').toggle();
         if($(this).text() === 'Show Province'){
@@ -60,15 +67,41 @@ d3.json('/api/province', function(error, data) {
 
 function filterProvince(provinceName, provinceId) {
     var dbs = JSON.parse(localStorage.getItem('data'));
+    if (provinceName === 'options'){
+        var dataSelection = $('#province-all').attr('data-select');
+        if (dataSelection === 'add'){
+            $('#province-list > a').removeClass('inactive');
+            $('#province-all').removeClass('enable-all');
+            $('#province-all').text('Disable All');
+            $('#province-all').attr('data-select','remove');
+        }else{
+            $('#province-list > a').addClass('inactive');
+            $('#province-all').addClass('enable-all');
+            $('#province-all').text('Enable All');
+            $('#province-all').attr('data-select','add');
+        }
+    } else {
+        $('#province-all').addClass('enable-all');
+        $('#province-all').text('Enable All');
+        $('#province-all').attr('data-select','add');
+    }
     dbs["features"] = $.map(dbs.features, function(x) {
         x = x;
-        if (x.properties.province === provinceName){
-            if (x.properties.master === "active") {
-                x.properties.master = "inactive";
-                $('#province-'+provinceId).addClass('inactive');
-            }else{
-                x.properties.master = "active";
-                $('#province-'+provinceId).removeClass('inactive');
+        if (provinceName === 'options'){
+            if (dataSelection === 'add'){
+                x.properties.master = 'active';
+            } else {
+                x.properties.master = 'inactive';
+            }
+        }else{
+            if (x.properties.province === provinceName){
+                if (x.properties.master === "active") {
+                    x.properties.master = "inactive";
+                    $('#province-'+provinceId).addClass('inactive');
+                }else{
+                    x.properties.master = "active";
+                    $('#province-'+provinceId).removeClass('inactive');
+                }
             }
         }
         return x;
@@ -76,6 +109,13 @@ function filterProvince(provinceName, provinceId) {
     localStorage.setItem('data', JSON.stringify(dbs));
     dbs = JSON.parse(localStorage.getItem('data'));
     metadata = dbs.properties;
+    if(metadata.attribution.type === 'num'){
+        $('#bar-legend').remove();
+        createHistogram();
+        categoryField = "neutral",
+            iconField = categoryField,
+            changeValue(dbs, []);
+    };
     if (clustered) {
         map.removeLayer(markerclusters);
         markerclusters = L.markerClusterGroup({
@@ -98,7 +138,6 @@ function filterProvince(provinceName, provinceId) {
         map.addLayer(mkr);
         map.attributionControl.addAttribution(metadata.attribution);
     }
-    console.log(dbs);
 };
 
 var geojson,
@@ -114,7 +153,7 @@ var geojson,
         maxClusterRadius: 2 * rmax,
         iconCreateFunction: defineClusterIcon //this is where the magic happens
     }),
-    map = L.map('mapid').setView([0, 0], 7);
+    map = L.map('mapid').setView([-8.3626894,160.3288342], 7);
 
 //Add basemap
 L.tileLayer(tileServer, {
@@ -313,11 +352,11 @@ function renderLegend(database) {
         .on('change', function(a) {
             var selectedVal = this.value.split('$')[0],
                 selectedInd = selectedVal.split('-');
-            database.properties.attribution.id = selectedInd.join('-');
-            database.properties.attribution.name = selectedInd.join(' ');
-            database.properties.attribution.type = this.value.split('$')[1];
-            localStorage.setItem('data', JSON.stringify(database));
             var dbs = JSON.parse(localStorage.getItem('data'));
+            dbs.properties.attribution.id = selectedInd.join('-');
+            dbs.properties.attribution.name = selectedInd.join(' ');
+            dbs.properties.attribution.type = this.value.split('$')[1];
+            localStorage.setItem('data', JSON.stringify(dbs));
             $('#bar-legend').remove();
             if (dbs.properties.attribution.type === 'str') {
                 legenddiv.remove();
@@ -326,12 +365,11 @@ function renderLegend(database) {
                     changeValue(dbs, []);
                 renderLegend(dbs);
             } else {
-                createBarChart(dbs);
+                createHistogram();
                 categoryField = "neutral",
                     iconField = categoryField,
                     changeValue(dbs, []);
             }
-            console.log(dbs);
         })
     var heading = legenddiv.append('div')
         .classed('legendheading', true)
@@ -417,7 +455,7 @@ function changeValue(database, deletes) {
     }
 }
 
-function filterMaps(minVal, maxVal, database, attributeName) {
+function filterMaps(minVal, maxVal, attributeName) {
     var dbs = JSON.parse(localStorage.getItem('data'));
     dbs["features"] = $.map(dbs.features, function(x) {
         x = x;
@@ -428,7 +466,6 @@ function filterMaps(minVal, maxVal, database, attributeName) {
         return x;
     });
     localStorage.setItem('data', JSON.stringify(dbs));
-    geojson = dbs;
     metadata = dbs.properties;
     if (clustered) {
         map.removeLayer(markerclusters);
@@ -445,7 +482,7 @@ function filterMaps(minVal, maxVal, database, attributeName) {
         map.attributionControl.addAttribution(metadata.attribution);
     } else {
         map.removeLayer(markerclusters);
-        mkr = L.geoJson(database, {
+        mkr = L.geoJson(dbs, {
             pointToLayer: defineFeature,
             onEachFeature: defineFeaturePopup
         });
@@ -454,15 +491,20 @@ function filterMaps(minVal, maxVal, database, attributeName) {
     }
 }
 
-function createBarChart(database) {
-    var attr_name = database.properties.attribution.name;
-    var barData = database.features.map(function(x) {
+function createHistogram() {
+    var dbs = JSON.parse(localStorage.getItem('data'));
+    var attr_name = dbs.properties.attribution.name;
+    var barData = dbs.features.map(function(x) {
         var obj = {};
         return {
             'school_name': x.properties['school_name'],
             'indicator': attr_name,
-            'value': x.properties[attr_name]
+            'value': x.properties[attr_name],
+            'master': x.properties['master']
         };
+    });
+    barData = _.remove(barData, function(n){
+        return n.master === 'active';
     });
     let dataGroup =_.groupBy(barData,'value');
     let histogram = _.map(dataGroup, function(v, i){
@@ -491,7 +533,7 @@ function createBarChart(database) {
 			textStyle: {
 				fontFamily:'Roboto',
 			},
-            text: database.properties.attribution.name.replace('_',' ').toUpperCase(),
+            text: dbs.properties.attribution.name.replace('_',' ').toUpperCase(),
         },
 		tooltip: {
             trigger: 'axis',
@@ -548,7 +590,7 @@ function createBarChart(database) {
         var axis = myChart.getModel().option.xAxis[0];
         var minVal = axis.data[axis.rangeStart];
         var maxVal = axis.data[axis.rangeEnd];
-        filterMaps(minVal,maxVal, database, attr_name);
+        filterMaps(minVal,maxVal, attr_name);
     });
 }
 

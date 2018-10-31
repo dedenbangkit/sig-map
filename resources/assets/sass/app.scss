@@ -278,7 +278,7 @@ tbody tr:hover{
     z-index: 1000;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.17);
 }
-.legendheading {
+.legendheading, .legendprovince {
     position: relative;
     font-size: 0.9rem;
     text-align: center;
@@ -337,6 +337,15 @@ tbody tr:hover{
     background:#007bff;
     color: #FFF;
     display: block;
+}
+#province-all{
+    display: block;
+    width: 100%;
+    background: #d63943;
+    color: #FFF;
+}
+#province-all.enable-all{
+    background: #3490dc;
 }
 
 /*Marker clusters*/

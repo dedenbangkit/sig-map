@@ -327,13 +327,17 @@ function renderLegend(database) {
         legenddiv = d3.select('body').append('div')
         .attr('id', 'legend');
     var indicators = d3.entries(metadata.attributes);
+    console.log(metadata);
     $('#legend').append('<select class="custom-select" id="indicators"></select>');
     indicators.forEach(function(x) {
-        var selected = '';
-        if (x.value.id == metadata.attribution.id) {
-            selected = 'selected';
-        }
-        $('#indicators').append('<option value="' + x.value.id + '$' + x.value.type + '"' + selected + '>' + x.value.name + '</options>');
+        $('#indicators').append('<optgroup id="'+x.value.id+'" label="'+x.value.name+'"></optgroup>');
+        x.value.collection.forEach(function(s) {
+            var selected = '';
+            if (s.id == metadata.attribution.id) {
+                selected = 'selected';
+            }
+            $('#'+x.value.id).append('<option value="' + s.id + '$' + s.type + '"' + selected + '>' + s.name + '</options>');
+        });
     });
     var dropdown = d3.select('#indicators');
     dropdown
@@ -451,8 +455,11 @@ function filterMaps(minVal, maxVal, attributeName) {
     dbs["features"] = $.map(dbs.features, function(x) {
         x = x;
         x.properties.status = "inactive";
-        if (x.properties[attributeName] >= minVal && x.properties[attributeName] <= maxVal) {
+        if (x.properties[attributeName] >= minVal && x.properties[attributeName] <= maxVal || x.properties[attributeName] === maxVal) {
             x.properties.status = "active";
+        }
+        if (x.properties[attributeName] === 0) {
+            x.properties.status = "inactive";
         }
         return x;
     });
@@ -506,9 +513,7 @@ function createHistogram() {
         };
     });
     histogram = _.orderBy(histogram, ['val', 'len'], ['asc', 'desc']);
-    histogram = _.remove(histogram, function(n) {
-        return n.val !== 0;
-    });
+    histogram = _.remove(histogram, function(n) { return n.val !== 0;});
     var barlegenddiv = d3.select('body').append('div')
         .attr('id', 'bar-legend');
     var heading = barlegenddiv.append('div')
@@ -532,11 +537,12 @@ function createHistogram() {
     }
     var barOption = {
         title: {
-            align: 'left',
+            center: 'left',
+            top: 10,
             textStyle: {
                 fontFamily: 'Roboto',
             },
-            text: dbs.properties.attribution.name.replace('_', ' ').toUpperCase(),
+            text: dbs.properties.attribution.name.replace(/_/g, ' ').toUpperCase(),
         },
         tooltip: {
             trigger: 'axis',
@@ -545,21 +551,25 @@ function createHistogram() {
             }
         },
         xAxis: {
+            offset:0.1,
+            name: attr_name.replace(/_/g, " ").toUpperCase(),
             type: 'category',
+            nameGap: 30,
+            nameLocation: 'middle',
             data: histogram.map(function(x) {
                 return x.val;
             }),
             boundaryGap: false,
         },
         yAxis: {
+            name: 'TOTAL OF SCHOOL',
+            nameLocation: 'middle',
+            nameGap: 25,
             type: 'value',
             boundaryGap: [0, '100%']
         },
         dataZoom: [{
-            type: 'inside',
-            start: chartPos[0],
-            end: chartPos[1]
-        }, {
+            type: 'slider',
             start: chartPos[0],
             end: chartPos[1],
             handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
@@ -569,12 +579,12 @@ function createHistogram() {
                 shadowBlur: 3,
                 shadowColor: 'rgba(0, 0, 0, 0.6)',
                 shadowOffsetX: 2,
-                shadowOffsetY: 2
+                shadowOffsetY: 2,
             }
         }],
         series: [{
-            name: attr_name,
-            type: 'line',
+            name: attr_name.replace(/_/g, " ").toUpperCase(),
+            type: 'bar',
             smooth: true,
             symbol: 'none',
             sampling: 'average',
@@ -595,6 +605,10 @@ function createHistogram() {
         var maxVal = axis.data[axis.rangeEnd];
         var newPos = [a.start, a.end];
         localStorage.setItem('chartPos', JSON.stringify(newPos));
+        if (typeof minVal === 'undefined'){
+            console.log(myChart.getModel().option);
+            console.log('tidak mantap');
+        }
         localStorage.setItem('filterPos', JSON.stringify([minVal, maxVal]))
         filterMaps(minVal, maxVal, attr_name);
     });

@@ -1,4 +1,3 @@
-const echarts = require('echarts');
 import 'leaflet';
 
 $('#stack_search a:nth-child(1)').css('display', 'inline-block');
@@ -27,14 +26,13 @@ $('#change-cluster').on('click', function() {
 var tileServer = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     tileAttribution = 'Tiles © Wikimedia — Source: OpenStreetMap, Data: Unicef Pacific WASH, <a href="https://akvo.org">Akvo SEAP</a>';
 
+d3.select('body').append('div').attr('id', 'main-filter-list');
 var provinceList;
 d3.json('/api/province', function(error, data) {
     provinceList = data;
-    $('#stack_search').prepend('<a id="province-filter" class="btn btn-light mp-btn my-2 my-sm-0">Show Province</a>');
     $('#province-filter').css('display', 'inline-block');
-    d3.select('body').append('div').attr('id', 'province-list');
-    d3.select('#province-list').append('div').attr('class', 'legendprovince').text('Province');
-    d3.select('#province-list').append('hr');
+    d3.select('#main-filter-list').append('div').attr('class', 'legendprovince').text('Province');
+    d3.select('#main-filter-list').append('div').attr('id', 'province-list');
     provinceList.forEach(function(x) {
         var provinceId = x.split(' ');
         provinceId = provinceId.join('_');
@@ -43,7 +41,7 @@ d3.json('/api/province', function(error, data) {
             .attr('id', 'province-' + provinceId)
             .text(x)
             .on('click', function(a) {
-                filterProvince(x, provinceId);
+                filterProvSchool(x, provinceId, 'province');
             });
     });
     d3.select('#province-list').append('button')
@@ -52,55 +50,97 @@ d3.json('/api/province', function(error, data) {
         .attr('data-select', 'remove')
         .text('Disable All')
         .on('click', function(a) {
-            filterProvince('options', 'all');
+            filterProvSchool('options', 'all', 'province');
         });
-    $('#province-filter').click(function(e) {
-        $('#province-list').toggle();
-        if ($(this).text() === 'Show Province') {
-            $(this).text('Hide Province');
+    $('.legendprovince').click(function(e) {
+        $('#province-list').slideToggle();
+        if ($(this).hasClass('active')) {
+            $(this).removeClass('active');
         } else {
-            $(this).text('Show Province');
+            $(this).addClass('active');
+            if($('.legendschooltype').hasClass('active')){
+                $('.legendschooltype').click();
+            };
         }
 
     });
 });
 
-function filterProvince(provinceName, provinceId) {
-    var dbs = JSON.parse(localStorage.getItem('data'));
-    if (provinceName === 'options') {
-        var dataSelection = $('#province-all').attr('data-select');
-        if (dataSelection === 'add') {
-            $('#province-list > a').removeClass('inactive');
-            $('#province-all').removeClass('enable-all');
-            $('#province-all').text('Disable All');
-            $('#province-all').attr('data-select', 'remove');
+var schoolTypeList;
+d3.json('/api/school-type', function(error, data) {
+    schoolTypeList = data;
+    $('#school-type-filter').css('display', 'inline-block');
+    d3.select('#main-filter-list').append('h3').attr('class', 'legendschooltype').text('School Type');
+    d3.select('#main-filter-list').append('div').attr('id', 'school-type-list');
+    schoolTypeList.forEach(function(x) {
+        var schoolTypeId = x.split(' ');
+        schoolTypeId = schoolTypeId.join('_');
+        d3.select('#school-type-list')
+            .append('a')
+            .attr('id', 'school-type-' + schoolTypeId)
+            .text(x)
+            .on('click', function(a) {
+                filterProvSchool(x, schoolTypeId, 'school-type');
+            });
+    });
+    d3.select('#school-type-list').append('button')
+        .attr('class', 'btn')
+        .attr('id', 'school-type-all')
+        .attr('data-select', 'remove')
+        .text('Disable All')
+        .on('click', function(a) {
+            filterProvSchool('options', 'all', 'school-type');
+        });
+    $('.legendschooltype').click(function(e) {
+        $('#school-type-list').slideToggle();
+        if ($(this).hasClass('active')) {
+            $(this).removeClass('active');
         } else {
-            $('#province-list > a').addClass('inactive');
-            $('#province-all').addClass('enable-all');
-            $('#province-all').text('Enable All');
-            $('#province-all').attr('data-select', 'add');
+            $(this).addClass('active');
+            if($('.legendprovince').hasClass('active')){
+                $('.legendprovince').click();
+            };
+        }
+
+    });
+});
+
+function filterProvSchool(dataName, dataId, type) {
+    var dbs = JSON.parse(localStorage.getItem('data'));
+    if (dataName === 'options') {
+        var dataSelection = $('#'+type+'-all').attr('data-select');
+        if (dataSelection === 'add') {
+            $('#'+type+'-list > a').removeClass('inactive');
+            $('#'+type+'-all').removeClass('enable-all');
+            $('#'+type+'-all').text('Disable All');
+            $('#'+type+'-all').attr('data-select', 'remove');
+        } else {
+            $('#'+type+'-list > a').addClass('inactive');
+            $('#'+type+'-all').addClass('enable-all');
+            $('#'+type+'-all').text('Enable All');
+            $('#'+type+'-all').attr('data-select', 'add');
         }
     } else {
-        $('#province-all').addClass('enable-all');
-        $('#province-all').text('Enable All');
-        $('#province-all').attr('data-select', 'add');
+        $('#'+type+'-all').addClass('enable-all');
+        $('#'+type+'-all').text('Enable All');
+        $('#'+type+'-all').attr('data-select', 'add');
     }
     dbs["features"] = $.map(dbs.features, function(x) {
         x = x;
-        if (provinceName === 'options') {
+        if (dataName === 'options') {
             if (dataSelection === 'add') {
-                x.properties.master = 'active';
+                x.properties[type + '-master'] = 'active';
             } else {
-                x.properties.master = 'inactive';
+                x.properties[type + '-master'] = 'inactive';
             }
         } else {
-            if (x.properties.province === provinceName) {
-                if (x.properties.master === "active") {
-                    x.properties.master = "inactive";
-                    $('#province-' + provinceId).addClass('inactive');
+            if (x.properties[type] === dataName) {
+                if (x.properties[type + '-master']=== "active") {
+                    x.properties[type + '-master']= "inactive";
+                    $('#' + type + '-' + dataId).addClass('inactive');
                 } else {
-                    x.properties.master = "active";
-                    $('#province-' + provinceId).removeClass('inactive');
+                    x.properties[type + '-master'] = "active";
+                    $('#' + type + '-' + dataId).removeClass('inactive');
                 }
             }
         }
@@ -111,10 +151,10 @@ function filterProvince(provinceName, provinceId) {
     metadata = dbs.properties;
     if (clustered === true) {
         map.removeLayer(markerclusters);
-        if (metadata.attribution.type === 'num'){
+        if (metadata.attribution.type === 'num') {
             $('#bar-legend').remove();
             createHistogram();
-        }else{
+        } else {
             changeValue(dbs, getFilterData());
         };
     } else {
@@ -174,7 +214,7 @@ d3.json(geojsonPath, function(error, data) {
 });
 
 function defineFeature(feature, latlng) {
-    if (feature.properties.status === 'active' && feature.properties.master === 'active') {
+    if (feature.properties.status === 'active' && feature.properties['province-master'] === 'active' && feature.properties['school-type-master'] === 'active') {
         var categoryVal = feature.properties[categoryField],
             iconVal = feature.properties[iconField];
         var myClass = 'marker category-' + categoryVal + ' icon-' + iconVal;
@@ -197,16 +237,9 @@ function defineFeaturePopup(feature, layer) {
     var props = feature.properties,
         fields = metadata.fields,
         popupContent = '';
-    popupFields.map(function(key) {
-        if (props[key]) {
-            var val = props[key],
-                label = fields[key].name;
-            if (fields[key].lookup) {
-                val = fields[key].lookup[val];
-            }
-            popupContent += '<span class="attribute"><span class="label">' + label + ':</span> ' + val + '</span>';
-        }
-    });
+    popupContent = '<span class="attribute"><span class="label">School Name:</span> ' + props.school_name + '</span>';
+    popupContent += '<span class="attribute"><span class="label">School Type:</span> ' + props.school_type + '</span>';
+    popupContent += '<span class="attribute"><span class="label">Province:</span> ' + props.province + '</span>';
     popupContent = '<div class="map-popup">' + popupContent + '<hr><button href="#" class="btn btn-primary btn-block" onclick="getDetails(this,0)" data="' + props.school_id + '"><i class=""></i> View Details</button></div>';
     layer.bindPopup(popupContent, {
         offset: L.point(1, -2)
@@ -327,16 +360,15 @@ function renderLegend(database) {
         legenddiv = d3.select('body').append('div')
         .attr('id', 'legend');
     var indicators = d3.entries(metadata.attributes);
-    console.log(metadata);
     $('#legend').append('<select class="custom-select" id="indicators"></select>');
     indicators.forEach(function(x) {
-        $('#indicators').append('<optgroup id="'+x.value.id+'" label="'+x.value.name+'"></optgroup>');
+        $('#indicators').append('<optgroup id="' + x.value.id + '" label="' + x.value.name + '"></optgroup>');
         x.value.collection.forEach(function(s) {
             var selected = '';
             if (s.id == metadata.attribution.id) {
                 selected = 'selected';
             }
-            $('#'+x.value.id).append('<option value="' + s.id + '$' + s.type + '"' + selected + '>' + s.name + '</options>');
+            $('#' + x.value.id).append('<option value="' + s.id + '$' + s.type + '"' + selected + '>' + s.name + '</options>');
         });
     });
     var dropdown = d3.select('#indicators');
@@ -464,7 +496,7 @@ function filterMaps(minVal, maxVal, attributeName) {
         return x;
     });
     localStorage.setItem('data', JSON.stringify(dbs));
-    geojson = dbs;
+    var geojson = dbs;
     metadata = dbs.properties;
     if (clustered === true) {
         map.removeLayer(markerclusters);
@@ -499,11 +531,11 @@ function createHistogram() {
             'school_name': x.properties['school_name'],
             'indicator': attr_name,
             'value': x.properties[attr_name],
-            'master': x.properties['master']
+            'master': x.properties['school-type-master']+ '_' + x.properties['province-master']
         };
     });
     barData = _.remove(barData, function(n) {
-        return n.master === 'active';
+        return n['master'] === "active_active";
     });
     let dataGroup = _.groupBy(barData, 'value');
     let histogram = _.map(dataGroup, function(v, i) {
@@ -513,7 +545,9 @@ function createHistogram() {
         };
     });
     histogram = _.orderBy(histogram, ['val', 'len'], ['asc', 'desc']);
-    histogram = _.remove(histogram, function(n) { return n.val !== 0;});
+    histogram = _.remove(histogram, function(n) {
+        return n.val !== 0;
+    });
     var barlegenddiv = d3.select('body').append('div')
         .attr('id', 'bar-legend');
     var heading = barlegenddiv.append('div')
@@ -531,7 +565,7 @@ function createHistogram() {
     if (chartPos === null) {
         chartPos = [0, 100];
         filterMaps(0, 100, attr_name);
-    }else{
+    } else {
         let filterPos = JSON.parse(localStorage.getItem('filterPos'));
         filterMaps(filterPos[0], filterPos[1], attr_name);
     }
@@ -548,10 +582,17 @@ function createHistogram() {
             trigger: 'axis',
             position: function(pt) {
                 return [pt[0], '100%'];
+            },
+            axisPointer : {
+                type: 'shadow'
+            },
+            formatter: function(param) {
+                console.log(param);
+                return param[0]['value'] + ' Schools</br>' + param[0]['axisValue'] + ' ' + dbs.properties.attribution.name.replace(/_/g, ' ');
             }
         },
         xAxis: {
-            offset:0.1,
+            offset: 0.1,
             name: attr_name.replace(/_/g, " ").toUpperCase(),
             type: 'category',
             nameGap: 30,
@@ -605,13 +646,15 @@ function createHistogram() {
         var maxVal = axis.data[axis.rangeEnd];
         var newPos = [a.start, a.end];
         localStorage.setItem('chartPos', JSON.stringify(newPos));
-        if (typeof minVal === 'undefined'){
-            console.log(myChart.getModel().option);
-            console.log('tidak mantap');
+        if (typeof minVal === 'undefined') {
+            console.log(axis);
         }
         localStorage.setItem('filterPos', JSON.stringify([minVal, maxVal]))
         filterMaps(minVal, maxVal, attr_name);
     });
+
+    $('#bar-legend').append("<button class='btn btn-danger'>Disable Zero</button>");
+
 }
 
 /*Helper function*/
@@ -623,5 +666,6 @@ function serializeXmlNode(xmlNode) {
     }
     return "";
 }
+
 
 maps = map;

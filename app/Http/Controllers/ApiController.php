@@ -81,8 +81,32 @@ class ApiController extends Controller
         return $data;
     }
 
+    public function getSchoolType(Request $request, DB $db)
+    {
+        return [
+            "Primary School",
+            "Community High School",
+            "Early Childhood Education Center",
+            "National Secondary School",
+            "Provincial Secondary School",
+            "Other",
+        ];
+    }
+
     public function getProvinces(Request $request, DB $db)
     {
+        return [
+          "Central",
+          "Choiseul",
+          "Guadalcanal",
+          "Honiara",
+          "Isabel",
+          "Makira",
+          "Malaita",
+          "Rennell and Bellona",
+          "Temotu",
+          "Western"
+        ];
         if (Cache::has('province-list')) {
             $data = Cache::get('province-list');
             return $data;
@@ -128,13 +152,6 @@ class ApiController extends Controller
 				),
 				'name' => 'Water SOurce',
 			),
-			'wash-club' => array(
-				'lookup'=> array(
-					'1'=>'No',
-					'4'=>'Yes',
-				),
-				'name' => 'Wash Club',
-			),
             'neutral' => array(
                 'lookup'=>array(
                     '1'=>'No Filter'
@@ -142,6 +159,8 @@ class ApiController extends Controller
                 'name' => 'No Filter'
             )
         );
+        $complete = ['Wash Club', 'Washing Facilities', 'Annual Grant', 'Community Support', 'Cleaning Schedule', 'Teacher Training or Workshop'];
+        $properties = $this->getCompleteFeatures($properties, $complete);
         $data = array(
             'type' => 'FeatureCollection',
             'features' => $features,
@@ -158,6 +177,8 @@ class ApiController extends Controller
                     ]),
                     array('id'=>'water-supply-group','name' => 'Water Supply', 'collection' => [
                         array('id'=>'water-source', 'name'=>'Water Source', 'type'=>'str'),
+                    ]),
+                    array('id'=>'hygiene-group','name' => 'Hygiene', 'collection' => [
                         array('id'=>'wash-club', 'name'=>'Wash Club', 'type'=>'str'),
                     ]),
                     array('id'=>'sanitation-group','name' => 'Sanitation', 'collection' => [
@@ -168,10 +189,33 @@ class ApiController extends Controller
                         array('id'=>'toilet_ratio', 'name'=>'Toilet Ratio', 'type'=>'num'),
                         array('id'=>'toilet_girl_ratio', 'name'=>'Toilet Girl Ratio', 'type'=>'num'),
                         array('id'=>'toilet_boy_ratio', 'name'=>'Toilet Boy Ratio', 'type'=>'num'),
-                    ])
+                    ]),
+                    array('id'=>'management-group','name' => 'School Management', 'collection' => [
+                        array('id'=>'wash-club', 'name'=>'Wash Club', 'type'=>'str'),
+                        array('id'=>'cleaning-schedule', 'name'=>'Cleaning Schedule', 'type'=>'str'),
+                        array('id'=>'annual-grant', 'name'=>'Annual Grant', 'type'=>'str'),
+                        array('id'=>'community-support', 'name'=>'Community Support', 'type'=>'str'),
+                        array('id'=>'teacher-training-or-workshop', 'name'=>'Teacher Training or Workshop', 'type'=>'str'),
+                    ]),
                 ]
             )
         );
         return $data;
     }
-}
+    private function getCompleteFeatures($data, $arr)
+    {
+        $data = collect($data);
+        collect($arr)->each(function($val) use ($data) {
+            $key = strtolower($val);
+            $key = str_replace(' ','-',$key);
+            return $data[$key] = array(
+				'lookup'=> array(
+					'1'=>'No',
+					'4'=>'Yes',
+				),
+				'name' => $val
+            );
+        }); 
+        return $data;
+    }
+};

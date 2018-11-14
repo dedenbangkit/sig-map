@@ -57,16 +57,21 @@ tbody tr:hover{
 }
 #school_desc .alert{
     margin-bottom:0px;
-    padding: 5px;
+    padding: 10px;
     border-radius:0px;
     border:none;
     color:#FFF;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    text-transform: capitalize;
 }
 #school_desc .alert-success{
     background:#28a745;
+    border:solid 1px #0e6722;
 }
 #school_desc .alert-danger{
     background:#dc3545;
+    border:solid 1px #800;
 }
 #school_desc .alert-warning{
     background:#FA0;
@@ -563,13 +568,30 @@ tbody tr:hover{
 .string-answer{
     background: #f8fafc;
     color: #4a4a4a;
-    padding: 5px;
-    border-top: solid #e8e8e8 1px;
-    border-left: solid #e8e8e8 1px;
-    border-right: solid #e8e8e8 1px;
+    padding: 10px;
+    border: solid #e8e8e8 1px;
     text-transform: capitalize;
+    margin-bottom: 10px;
+    border-radius: 5px;
 }
 .chart-detail-long{
 	height:400px;
 	width:720px;
+}
+.dataTables_processing.card{
+    margin: -50px 0 0 -75px;
+    background: #4c8edf;
+    color: #FFF;
+    width:150px;
+}
+div.dataTables_wrapper {
+    width: 100%;
+    margin: 0 auto;
+}
+.carousel-caption{
+    bottom:0px;
+    background:rgba(26,29,32,.5);
+    padding-bottom:10px;
+    left:0px;
+    right:0px;
 }

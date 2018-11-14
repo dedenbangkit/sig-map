@@ -13,7 +13,7 @@ class ApiController extends Controller
 
     public function getParams(Request $request)
     {
-        $spath = asset('storage/config.json');
+        $spath = asset('/config.json');
         $keys = file_get_contents($spath, true); 
         return $keys;
     }
@@ -56,6 +56,10 @@ class ApiController extends Controller
                     ->orWhereRaw("L like ?", ["%{$keyword}%"]);
             })->addColumn('t_students', function($data) {
                 return ((int) $data->s_girls + (int) $data->s_boys);
+            })->addColumn('t_teacher', function($data) {
+                return ((int) $data->teacher_male + (int) $data->teacher_female);
+            })->addColumn('registration', function($data) {
+                return (int) $data->P;
             })->addColumn('t_toilets', function($data) {
                 return ((int) $data->t_girls + (int) $data->t_boys + (int) $data->t_sap);
             })->addColumn('bg_toilet', function($data) {
@@ -173,7 +177,8 @@ class ApiController extends Controller
                         array('id'=>'students_girl', 'name'=>'Number of Girl Students', 'type'=>'num'),
                         array('id'=>'teacher_total', 'name'=>'Number of Teacher', 'type'=>'num'),
                         array('id'=>'teacher_male', 'name'=>'Number of Male Teacher', 'type'=>'num'),
-                        array('id'=>'teacher_female', 'name'=>'Number of Female Teacher', 'type'=>'num')
+                        array('id'=>'teacher_female', 'name'=>'Number of Female Teacher', 'type'=>'num'),
+                        array('id'=>'teacher_ratio', 'name'=>'Teacher/Students Ratio', 'type'=>'num')
                     ]),
                     array('id'=>'water-supply-group','name' => 'Water Supply', 'collection' => [
                         array('id'=>'water-source', 'name'=>'Water Source', 'type'=>'str'),
@@ -191,7 +196,6 @@ class ApiController extends Controller
                         array('id'=>'toilet_boy_ratio', 'name'=>'Toilet Boy Ratio', 'type'=>'num'),
                     ]),
                     array('id'=>'management-group','name' => 'School Management', 'collection' => [
-                        array('id'=>'wash-club', 'name'=>'Wash Club', 'type'=>'str'),
                         array('id'=>'cleaning-schedule', 'name'=>'Cleaning Schedule', 'type'=>'str'),
                         array('id'=>'annual-grant', 'name'=>'Annual Grant', 'type'=>'str'),
                         array('id'=>'government_funds', 'name'=>'Government Funds', 'type'=>'num'),

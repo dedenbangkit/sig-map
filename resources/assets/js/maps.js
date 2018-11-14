@@ -544,7 +544,7 @@ function createHistogram() {
             'val': v[0].value
         };
     });
-    histogram = _.orderBy(histogram, ['val', 'len'], ['asc', 'desc']);
+    histogram = _.orderBy(histogram, ['val'], ['asc']);
     histogram = _.remove(histogram, function(n) {
         return n.val !== 0;
     });

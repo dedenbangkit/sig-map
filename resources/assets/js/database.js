@@ -20,6 +20,9 @@ $.ajaxSetup({
 $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn btn-light my-2 my-sm-0';
 
 var data_table = $('#school_table').DataTable({
+    pageLength:10,
+    scrollX:true,
+    autoWidth:false,
 	processing: true,
 	serverSide: true,
 	ajax: {
@@ -27,13 +30,19 @@ var data_table = $('#school_table').DataTable({
 		method: 'POST'
 	},
 	columns: [
-        col('A', true, true),
-        col('P', true, true),
         col('L', true, true),
+        col('province', true, true),
+        col('school_type', true, true),
+        col('registration', true, true),
         col('R', true, true),
         col('total_students', true, false),
-        col('t_toilets', true, false),
+        col('total_teacher', true, false),
+        col('total_toilet', true, false),
         col('bg_toilet', false, false),
+        col('washing_facilities', true, false),
+        col('safe_to_drink', true, false),
+        col('annual_grant', true, false),
+        col('community_support', true, false),
 	],
     lengthMenu: [
         [ 10, 25, 50, 100, -1 ],
@@ -66,7 +75,8 @@ var data_table = $('#school_table').DataTable({
 $("#find").removeAttr('onkeydown');
 $('#school_table tbody').on('click', 'tr', function () {
 	var data = data_table.row( this ).data();
-	getDetails(data['identifier'],'id');
+    console.log(data);
+	getDetails(data['A'],'id');
 });
 
 $(btn4).on('click', function () {

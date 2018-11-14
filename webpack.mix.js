@@ -31,10 +31,14 @@ mix.js([
     .copy('resources/assets/images/', 'public/images/')
     .copy('resources/assets/js/global.js', 'public/js/global.js')
     .copy('resources/assets/js/vendors/echarts.min.js', 'public/js/vendors/echarts.min.js')
+    .copy('resources/assets/js/vendors/datatables.min.js', 'public/js/vendors/datatables.min.js')
+    .copy('resources/assets/js/vendors/d3.v3.min.js', 'public/js/vendors/d3.v3.min.js')
+    .copy('resources/assets/js/vendors/lodash.min.js', 'public/js/vendors/lodash.min.js')
     .copy('node_modules/leaflet/dist/', 'public/vendor/leaflet/')
     .copy('node_modules/@fortawesome/fontawesome-free/css/all.min.css', 'public/vendor/fontawesome/css/all.min.css')
     .copy('node_modules/@fortawesome/fontawesome-free/webfonts/', 'public/vendor/fontawesome/webfonts/')
     .copy('node_modules/js-cache/bundle/cache.js', 'public/vendor/cache-js/cache.js')
+    .copy('resources/assets/json/config.json', 'public/config.json')
     .sass('resources/assets/sass/app.scss', 'public/css')
     .version();
 

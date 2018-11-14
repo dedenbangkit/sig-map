@@ -8,14 +8,6 @@ use DB;
 
 class Database extends Model
 {
-    /*
-    public function getTotalStudentsAttribute()
-    {
-        $total = $this->attributes['28390924'] + $this->attributes['23430922'];
-        return $total;
-    }
-     */
-
     protected $hidden = ['index'];
 
     public function getRegistrationAttribute()
@@ -35,8 +27,10 @@ class Database extends Model
             'O as school_type_other',
             'S as ts_girl',
             'T as ts_boy',
+            DB::raw('(S + T) as students_total'),
             'U as tt_male',
             'V as tt_female',
+            DB::raw('(U + V) as teacher_total'),
             'Y as water_source',
             'CU as wash_club',
             'CF as washing_facilities',
@@ -44,6 +38,7 @@ class Database extends Model
             'DY as community_support', 
             'DD as cleaning_schedule', 
             'DD as training', 
+            DB::raw('(BH + BJ + BL) as toilet_total'),
             'BH as toilet_together',
             'BJ as toilet_girl',
             'BL as toilet_boy',
@@ -52,8 +47,6 @@ class Database extends Model
             'AV as has_toilets',
             'AJ as safe_to_drink',
             'DW as government_funds'
-        )->whereNotIn(
-            'identifier', ['d3es-mqgt-9mmg', 'tf33-p848-vwrk', 'fnd5-549n-tp75']
         ))->map(function($data) {
 			$toilet = '1';
 			if ($data->has_toilets === 'Yes')
@@ -83,23 +76,16 @@ class Database extends Model
             if ($data->school_type === null){
                 $data->school_type = "Other";
             }
-            $data->total_teacher = $data->tt_female + $data->tt_male;
-            $data->total_students = 0;
-            $data->total_students = $data->ts_girl + $data->ts_boy;
-            $data->teacher_ratio = 0;
-            if ($data->total_teacher != null && $data->total_students != null){
-                $data->teacher_ratio = round($data->total_students / $data->total_teacher, 2); 
-            }
-            $data->toilet_total = $data->toilet_girl + $data->toilet_boy + $data->toilet_together;
+            $data->teacher_ratio = round($data->students_total / $data->teacher_total, 2); 
             $data->toilet_ratio = 0; 
             $data->toilet_girl_ratio = 0;
             $data->toilet_boy_ratio = 0;
-            if ($data->toilet_total != null && $data->total_students != null){
+            if ($data->toilet_total != 0){
                 $data->toilet_ratio = round($data->total_students / $data->toilet_total, 2);
-                if($data->toilet_girl != null && $data->ts_girl !=null){
+                if($data->toilet_girl !=0 && $data->ts_girl !=0){
                     $data->toilet_girl_ratio = round($data->ts_girl / $data->toilet_girl, 2);
                 }
-                if($data->toilet_boy != 0 && $data->ts_boy !=null){
+                if($data->toilet_boy != 0 && $data->ts_boy !=0){
                     $data->toilet_boy_ratio = round($data->ts_boy / $data->toilet_boy, 2);
                 }
             }
@@ -113,19 +99,19 @@ class Database extends Model
                     'school-type' => $data->school_type,
                     'province' => $data->province,
                     'school_name' => $data->school_name,
-                    'students_total' => $data->total_students, 
+                    'students_total' => (int) $data->students_total, 
                     'students_boy' => (int) $data->ts_boy,
                     'students_girl' => (int) $data->ts_girl,
-                    'teacher_total' => $data->total_teacher,
+                    'teacher_total' => (int) $data->teacher_total,
                     'teacher_male' => (int) $data->tt_male,
                     'teacher_female' => (int) $data->tt_female,
-                    'teacher_ratio' => $data->teacher_ratio, 
+                    'teacher_ratio' => (int) $data->teacher_ratio, 
                     'toilet_girl' => (int) $data->toilet_girl, 
                     'toilet_boy' => (int) $data->toilet_boy, 
-                    'toilet_total' => $data->toilet_total, 
-                    'toilet_ratio' => $data->toilet_ratio, 
-                    'toilet_girl_ratio' => $data->toilet_girl_ratio, 
-                    'toilet_boy_ratio' => $data->toilet_boy_ratio, 
+                    'toilet_total' => (int) $data->toilet_total, 
+                    'toilet_ratio' => (int) $data->toilet_ratio, 
+                    'toilet_girl_ratio' => (int) $data->toilet_girl_ratio, 
+                    'toilet_boy_ratio' => (int) $data->toilet_boy_ratio, 
                     'toilet_toilet_location' => $data->toilet_location, 
                     'school_id' => $data->identifier,
                     'government_funds' => (int) $data->government_funds,
@@ -163,7 +149,6 @@ class Database extends Model
     public function provinces()
     {
         $db = $this->select('EX')
-            ->whereNotNull('EX')
             ->groupby('EX')
             ->get();
         return $db;
@@ -195,11 +180,25 @@ class Database extends Model
     public function datatable()
     {
         return $this->select(
+            'EX as province',
+            'N as school_type',
+            'O as school_type_other',
+            DB::raw('(U + V) as total_teacher'),
+            'Y as water_source',
+            'CU as wash_club',
+            'CF as washing_facilities',
+            'DY as community_support', 
+            'DD as cleaning_schedule', 
+            'DD as training', 
+            'AV as has_toilets',
+            'AJ as safe_to_drink',
+            'DW as annual_grant',
             'P', 
             'R', 
             'L', 
             'A',
             DB::raw('(S + T) as total_students'),
+            DB::raw('(BG + BJ + BL) as total_toilet'),
             'S as s_girls',
             'T as s_boys',
             'BH as t_sap',
@@ -211,11 +210,16 @@ class Database extends Model
 
     public function toilets()
     {
-        return $this->select(
-            DB::raw('(`20490967` + `22530927` + `27360922`) as t_toilets'),
-            '22530927 as t_girls',
-            '27360922 as t_boys'
-        )->get();
+        $data = collect($this->all(
+            'BL as shared'),
+            'BH as t_girls',
+            'BJ as t_boys'
+        )->map(function($data){
+            $data->t_toilets = (int) $data->shared + $data->t_girls + $data->t_boys;
+            return $data;
+        });
+        return $data;
+        
     }
 
 }

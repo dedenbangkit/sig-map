@@ -11,6 +11,6 @@
     <link href="{{asset(mix('css/app.css'))}}" rel="stylesheet">
     <link href="{{asset('vendor/leaflet/leaflet.css')}}" rel="stylesheet">
     <link href="{{asset('vendor/fontawesome/css/all.min.css')}}" rel="stylesheet">
-    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script scr="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
+    <script src="{{asset('js/vendors/d3.v3.min.js')}}" charset="utf-8"></script>
+    <script src="{{asset('js/vendors/lodash.min.js')}}" charset="utf-8"></script>
 </head>

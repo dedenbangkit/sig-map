@@ -268,35 +268,35 @@ function getDetails(a, atype) {
                         var qs = key.replace('if yes, ','');
                         if (str.includes("|")) {
                             let ans = str.split("|");
-                            let opts = "";
+                            let opts = "<hr>";
                             ans.forEach(function(x){
                                 opts = opts + '</br>--&nbsp;&nbsp;' + x;
                             });
                             body = "<div class='string-answer'>" + qs + opts + "</div>";
                         }else{
-                            body = "<div class='string-answer'>" + qs +'</br>--&nbsp;&nbsp;'+ str + "</div>";
+                            body = "<div class='string-answer'>" + qs +'<hr>--&nbsp;&nbsp;'+ str + "</div>";
                         }
                         if (paramGroups['hygiene'].includes(key)) {
-                            $('#hygiene-tab').prepend(body);
+                            $('#hygiene-tab').append(body);
                         }
                         if (paramGroups['school-management'].includes(key)) {
-                            $('#management-tab').prepend(body);
+                            $('#management-tab').append(body);
                         }
                         if (paramGroups['sanitation'].includes(key)) {
-                            $('#sanitation-tab').prepend(body);
+                            $('#sanitation-tab').append(body);
                         }
                         if (paramGroups['water-supply'].includes(key)) {
-                            $('#water_supply-tab').prepend(body);
+                            $('#water_supply-tab').append(body);
                         }
                     }
                     $('.carousel-item').first().addClass('active');
                 };
             }
         });
-        $('#hygiene-tab').prepend('<hr><h5>Indicators</h5>');
-        $('#management-tab').prepend('<hr><h5>Indicators</h5>');
-        $('#sanitation-tab').prepend('<hr><h5>Indicators</h5>');
-        $('#water_supply-tab').prepend('<hr><h5>Indicators</h5>');
+        $('#hygiene-tab').prepend('<h5>Indicators</h5><hr>');
+        $('#management-tab').prepend('<h5>Indicators</h5><hr>');
+        $('#sanitation-tab').prepend('<h5>Indicators</h5><hr>');
+        $('#water_supply-tab').prepend('<h5>Indicators</h5><hr>');
 
         $('#profile-tab').append("<div> <b>Province</b> : " + data['unnamed: 153'] + "</div><hr>");
         if (data['type of school?'] === null) {
@@ -365,6 +365,11 @@ function setOptionChart(title, categories, data) {
         title: {
             text: title
         },
+        tooltip: {
+            axisPointer : {
+                type: 'shadow'
+            },
+        },
         xAxis: {
             type: 'category',
             data: categories
@@ -374,7 +379,11 @@ function setOptionChart(title, categories, data) {
         },
         series: [{
             data: data,
-            type: 'bar'
+            type: 'bar',
+            smooth: true,
+            itemStyle: {
+                color: '#dc3545'
+            }
         }]
     };
 }

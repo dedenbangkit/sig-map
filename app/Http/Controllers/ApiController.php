@@ -75,13 +75,32 @@ class ApiController extends Controller
 
     public function getGeoJson(Request $request, DB $db)
     {
-        if (Cache::has('all-geojson')) {
-            $data = Cache::get('all-geojson');
+        $features = $db->maps(); 
+        $data = $this->getFeatures($features, 'full');
+        return $data;
+    }
+
+    public function getGeoFeatures(Request $request, DB $db)
+    {
+        if (Cache::has('all-geo-features')) {
+            $data = Cache::get('all-geo-features');
             return $data;
         }
         $features = $db->maps(); 
-        $data = $this->getFeatures($features);
-        Cache::put('all-geojson', $data, 60);
+        $data = $this->getFeatures($features, 'min');
+        Cache::put('all-geo-features', $data, 60);
+        return $data;
+    }
+
+    public function getGeoRson(Request $request, DB $db)
+    {
+        if (Cache::has('all-georson')) {
+            $data = Cache::get('all-georson');
+            return $data;
+        }
+        $spath = asset('/rgeojson.json');
+        $data = file_get_contents($spath, true); 
+        Cache::put('all-georson', $data, 60);
         return $data;
     }
 
@@ -131,7 +150,7 @@ class ApiController extends Controller
         return $data;
     }
 
-    private function getFeatures($features)
+    private function getFeatures($features, $type)
     {
         $properties = array(
 			'school_name' => array(
@@ -167,7 +186,6 @@ class ApiController extends Controller
         $properties = $this->getCompleteFeatures($properties, $complete);
         $data = array(
             'type' => 'FeatureCollection',
-            'features' => $features,
             'properties' => array(
                 'fields' => $properties,
                 'attribution' => array('id' => 'toilet-type','name' => 'Toilet Type','type'=>'str'),
@@ -205,6 +223,11 @@ class ApiController extends Controller
                 ]
             )
         );
+		if ($type === 'full'){
+			$data['features'] = $features;
+		}else{
+			$data['features'] = [];
+		};
         return $data;
     }
     private function getCompleteFeatures($data, $arr)

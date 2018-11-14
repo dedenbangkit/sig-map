@@ -58,7 +58,7 @@ d3.json('/api/province', function(error, data) {
             $(this).removeClass('active');
         } else {
             $(this).addClass('active');
-            if($('.legendschooltype').hasClass('active')){
+            if ($('.legendschooltype').hasClass('active')) {
                 $('.legendschooltype').click();
             };
         }
@@ -97,7 +97,7 @@ d3.json('/api/school-type', function(error, data) {
             $(this).removeClass('active');
         } else {
             $(this).addClass('active');
-            if($('.legendprovince').hasClass('active')){
+            if ($('.legendprovince').hasClass('active')) {
                 $('.legendprovince').click();
             };
         }
@@ -108,22 +108,22 @@ d3.json('/api/school-type', function(error, data) {
 function filterProvSchool(dataName, dataId, type) {
     var dbs = JSON.parse(localStorage.getItem('data'));
     if (dataName === 'options') {
-        var dataSelection = $('#'+type+'-all').attr('data-select');
+        var dataSelection = $('#' + type + '-all').attr('data-select');
         if (dataSelection === 'add') {
-            $('#'+type+'-list > a').removeClass('inactive');
-            $('#'+type+'-all').removeClass('enable-all');
-            $('#'+type+'-all').text('Disable All');
-            $('#'+type+'-all').attr('data-select', 'remove');
+            $('#' + type + '-list > a').removeClass('inactive');
+            $('#' + type + '-all').removeClass('enable-all');
+            $('#' + type + '-all').text('Disable All');
+            $('#' + type + '-all').attr('data-select', 'remove');
         } else {
-            $('#'+type+'-list > a').addClass('inactive');
-            $('#'+type+'-all').addClass('enable-all');
-            $('#'+type+'-all').text('Enable All');
-            $('#'+type+'-all').attr('data-select', 'add');
+            $('#' + type + '-list > a').addClass('inactive');
+            $('#' + type + '-all').addClass('enable-all');
+            $('#' + type + '-all').text('Enable All');
+            $('#' + type + '-all').attr('data-select', 'add');
         }
     } else {
-        $('#'+type+'-all').addClass('enable-all');
-        $('#'+type+'-all').text('Enable All');
-        $('#'+type+'-all').attr('data-select', 'add');
+        $('#' + type + '-all').addClass('enable-all');
+        $('#' + type + '-all').text('Enable All');
+        $('#' + type + '-all').attr('data-select', 'add');
     }
     dbs["features"] = $.map(dbs.features, function(x) {
         x = x;
@@ -135,8 +135,8 @@ function filterProvSchool(dataName, dataId, type) {
             }
         } else {
             if (x.properties[type] === dataName) {
-                if (x.properties[type + '-master']=== "active") {
-                    x.properties[type + '-master']= "inactive";
+                if (x.properties[type + '-master'] === "active") {
+                    x.properties[type + '-master'] = "inactive";
                     $('#' + type + '-' + dataId).addClass('inactive');
                 } else {
                     x.properties[type + '-master'] = "active";
@@ -171,7 +171,7 @@ function filterProvSchool(dataName, dataId, type) {
 var geojson,
     metadata,
     clustered = true,
-    geojsonPath = '/api/geojson/',
+    geojsonPath = '/api/rgeojson/',
     categoryField = 'toilet-type',
     iconField = categoryField,
     popupFields = ['school_name', 'school_id'],
@@ -193,25 +193,94 @@ L.tileLayer(tileServer, {
 map.addLayer(markerclusters);
 
 //Ready to go, load the geojson
-d3.json(geojsonPath, function(error, data) {
-    localStorage.setItem('data', JSON.stringify(data));
-    var retrievedObject = localStorage.getItem('data');
-    data = JSON.parse(retrievedObject);
-    if (!error) {
-        geojson = data;
-        metadata = data.properties;
-        var markers = L.geoJson(geojson, {
-            pointToLayer: defineFeature,
-            onEachFeature: defineFeaturePopup
+function getGeoJson() {
+    d3.json(geojsonPath, function(error, data) {
+        let keyValues = [
+            "",
+            "school-type",
+            "province",
+            "school_name",
+            "students_total",
+            "students_boy",
+            "students_girl",
+            "teacher_total",
+            "teacher_male",
+            "teacher_female",
+            "teacher_ratio",
+            "toilet_girl",
+            "toilet_boy",
+            "toilet_total",
+            "toilet_ratio",
+            "toilet_girl_ratio",
+            "toilet_boy_ratio",
+            "toilet_toilet_location",
+            "school_id",
+            "government_funds",
+            "toilet-type",
+            "water-source",
+            "wash-club",
+            "washing-facilities",
+            "annual-grant",
+            "community-support",
+            "cleaning-schedule",
+            "teacher-training-or-workshop",
+            "status",
+            "province-master",
+            "school-type-master"
+        ];
+        let refactor = [];
+        data.forEach(function(val) {
+            var geoProp = {};
+            geoProp["type"] = "Feature";
+            geoProp["geometry"] = {};
+            geoProp["properties"] = {};
+            keyValues.forEach(function(key, idx) {
+                if (key === "") {
+                    geoProp["geometry"] = {
+                        "type": "Point",
+                        "coordinates": val[idx]
+                    };
+                } else {
+                    geoProp["properties"][key] = val[idx];
+                };
+            });
+            refactor.push(geoProp);
         });
-        markerclusters.addLayer(markers);
-        map.fitBounds(markers.getBounds());
-        map.attributionControl.addAttribution(metadata.attribution);
-        renderLegend(data);
-    } else {
-        console.log('Could not load data...');
-    }
-});
+        d3.json('/api/geofeatures', function(error, data) {
+            data.features = refactor;
+            localStorage.setItem('data', JSON.stringify(data));
+            var retrievedObject = localStorage.getItem('data');
+            data = JSON.parse(retrievedObject);
+            if (!error) {
+                loadData(data);
+            } else {
+                console.log('Could not load data...');
+            }
+        });
+    });
+}
+
+function loadData(allPoints) {
+    geojson = allPoints;
+    metadata = allPoints.properties;
+    var markers = L.geoJson(geojson, {
+        pointToLayer: defineFeature,
+        onEachFeature: defineFeaturePopup
+    });
+    markerclusters.addLayer(markers);
+    map.fitBounds(markers.getBounds());
+    map.attributionControl.addAttribution(metadata.attribution);
+    renderLegend(allPoints);
+}
+
+
+var cacheMem = JSON.parse(localStorage.getItem('data'));
+
+if (cacheMem === null || typeof cacheMem === "undefined") {
+    getGeoJson();
+} else {
+    loadData(cacheMem);
+}
 
 function defineFeature(feature, latlng) {
     if (feature.properties.status === 'active' && feature.properties['province-master'] === 'active' && feature.properties['school-type-master'] === 'active') {
@@ -531,7 +600,7 @@ function createHistogram() {
             'school_name': x.properties['school_name'],
             'indicator': attr_name,
             'value': x.properties[attr_name],
-            'master': x.properties['school-type-master']+ '_' + x.properties['province-master']
+            'master': x.properties['school-type-master'] + '_' + x.properties['province-master']
         };
     });
     barData = _.remove(barData, function(n) {
@@ -583,7 +652,7 @@ function createHistogram() {
             position: function(pt) {
                 return [pt[0], '100%'];
             },
-            axisPointer : {
+            axisPointer: {
                 type: 'shadow'
             },
             formatter: function(param) {

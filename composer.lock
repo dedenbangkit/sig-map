@@ -4,8 +4,54 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71c01ed38c729bb1a2248b8ce63a357e",
+    "content-hash": "ff2534452bbd99d7d8258a892fc6e9ca",
     "packages": [
+        {
+            "name": "dmitrirussu/rjson-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dmitrirussu/RJSON-php.git",
+                "reference": "3edb9e161cec02e09caa38c29c4c233c185ea472"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dmitrirussu/RJSON-php/zipball/3edb9e161cec02e09caa38c29c4c233c185ea472",
+                "reference": "3edb9e161cec02e09caa38c29c4c233c185ea472",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "SEPA": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GNU"
+            ],
+            "authors": [
+                {
+                    "name": "Dmitri Russu",
+                    "email": "dmitri.russu@gmail.com"
+                }
+            ],
+            "description": "Compress array collection data to json",
+            "keywords": [
+                "JSONP",
+                "archive",
+                "array",
+                "collection",
+                "compress",
+                "compress array",
+                "json",
+                "json-php"
+            ],
+            "time": "2017-10-20T07:17:35+00:00"
+        },
         {
             "name": "dnoegel/php-xdg-base-dir",
             "version": "0.1",
@@ -4195,7 +4241,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "dmitrirussu/rjson-php": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

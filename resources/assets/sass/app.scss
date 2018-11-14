@@ -260,7 +260,7 @@ tbody tr:hover{
     background-color: inherit;
 }
 .buttons-columnVisibility:before{
-    font-family: "Font Awesome 5 Free";
+    font-family: "FontAwesome";
     font-weight: 900;
     padding-right: 10px;
     content: "\f00c";
@@ -268,7 +268,7 @@ tbody tr:hover{
 }
 .buttons-columnVisibility.active:before{
     color:inherit;
-    font-family: "Font Awesome 5 Free";
+    font-family: "FontAwesome";
     font-weight: 900;
     padding-right: 10px;
     content: "\f00c";
@@ -328,7 +328,7 @@ tbody tr:hover{
 }
 .legendprovince:before,
 .legendschooltype:before{
-    font-family: "Font Awesome 5 Free";
+    font-family: "FontAwesome";
     font-weight: 900;
     padding-right: 10px;
     content: "\f0a9";
@@ -350,7 +350,7 @@ tbody tr:hover{
     cursor: pointer;
 }
 .legenditem:before{
-    font-family: "Font Awesome 5 Free";
+    font-family: "FontAwesome";
     font-weight: 900;
     padding-right: 10px;
     content: "\f00c";
@@ -383,7 +383,7 @@ tbody tr:hover{
 }
 #province-list>a:before,
 #school-type-list>a:before {
-    font-family: "Font Awesome 5 Free";
+    font-family: "FontAwesome";
     font-weight: 900;
     padding-right: 10px;
     content: "\f00c";
@@ -494,7 +494,7 @@ tbody tr:hover{
     background: #222;
 }
 .inactive-legend:before{
-    font-family: "Font Awesome 5 Free";
+    font-family: "FontAwesome";
     font-weight: 900;
     padding-right: 10px;
     content: "\f057";

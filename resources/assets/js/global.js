@@ -265,16 +265,16 @@ function getDetails(a, atype) {
                             "<div class='carousel-caption d-none d-md-block'><p>" + question + "</p></div></div>";
                         $('.carousel-inner').append(body)
                     } else {
-                        var qs = key.replace('if yes, ','');
+                        var qs = key.replace('if yes, ', '');
                         if (str.includes("|")) {
                             let ans = str.split("|");
                             let opts = "<hr>";
-                            ans.forEach(function(x){
+                            ans.forEach(function(x) {
                                 opts = opts + '</br>--&nbsp;&nbsp;' + x;
                             });
                             body = "<div class='string-answer'>" + qs + opts + "</div>";
-                        }else{
-                            body = "<div class='string-answer'>" + qs +'<hr>--&nbsp;&nbsp;'+ str + "</div>";
+                        } else {
+                            body = "<div class='string-answer'>" + qs + '<hr>--&nbsp;&nbsp;' + str + "</div>";
                         }
                         if (paramGroups['hygiene'].includes(key)) {
                             $('#hygiene-tab').append(body);
@@ -366,7 +366,7 @@ function setOptionChart(title, categories, data) {
             text: title
         },
         tooltip: {
-            axisPointer : {
+            axisPointer: {
                 type: 'shadow'
             },
         },
@@ -490,4 +490,21 @@ function getAverage() {
         }).value();
     localStorage.setItem('mean-province', JSON.stringify(meanProvinces));
     return meanProvinces;
+}
+
+
+function outArray() {
+    // var lata = JSON.parse(localStorage.getItem('data'));
+    $.get('/api/geojson/',function(data){
+        let rawData = [];
+        data.features.forEach(function(item) {
+            let mata = [];
+            mata.push(item.geometry.coordinates);
+            Object.keys(item.properties).forEach(function(key) {
+                mata.push(item.properties[key]);
+            });
+            rawData.push(mata);
+        });
+        console.log(JSON.stringify(rawData));
+    });
 }

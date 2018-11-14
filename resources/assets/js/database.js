@@ -5,7 +5,7 @@ var btn4 = $('#stack_search a:last-child');
 $(btn4).removeAttr('onclick');
 
 function icon(fa){
-    return "<i class='fas fa-"+fa+"'></i>";
+    return "<i class='fa fa-"+fa+"'></i>";
 }
 function col(id, order, searchable){
     return {data:id,name:id,orderable:order,searchable:searchable};
@@ -55,13 +55,13 @@ var data_table = $('#school_table').DataTable({
           key: { key: 'p', altkey: true }
         },
         { extend: 'excel',
-          text: icon('file-excel'),
+          text: icon('file-excel-o'),
           key: { key: 'x', altkey: true }},
         { extend: 'pdf',
-          text: icon('file-pdf'),
+          text: icon('file-pdf-o'),
           key: { key: 'd', altkey: true }},
         { extend: 'csv',
-          text: icon('file-contract'),
+          text: icon('file-text-o'),
           key: { key: 'c', altkey: true }},
         { extend: 'colvis', fade:0, text: icon('table')},
         { extend: 'pageLength', fade:0},
@@ -94,3 +94,4 @@ function searchTable(){
 	let search_val = $('#find').val();
 	data_table.search(search_val).draw();
 }
+

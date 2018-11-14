@@ -19,6 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/params','ApiController@getParams');
 Route::get('/locations','ApiController@getLocation');
 Route::get('/geojson/','ApiController@getGeoJson');
+Route::get('/rgeojson/','ApiController@getGeoRson');
+Route::get('/geofeatures/','ApiController@getGeoFeatures');
 Route::get('/province/','ApiController@getProvinces');
 Route::get('/school-type/','ApiController@getSchoolType');
 Route::get('/details/{id}','ApiController@getDetail');

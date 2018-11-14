@@ -38,7 +38,6 @@ class Database extends Model
             'DY as community_support', 
             'DD as cleaning_schedule', 
             'DD as training', 
-            DB::raw('(BH + BJ + BL) as toilet_total'),
             'BH as toilet_together',
             'BJ as toilet_girl',
             'BL as toilet_boy',
@@ -77,11 +76,12 @@ class Database extends Model
                 $data->school_type = "Other";
             }
             $data->teacher_ratio = round($data->students_total / $data->teacher_total, 2); 
+            $data->toilet_total = (int) $data->toilet_together + (int) + $data->toilet_girl + (int) $data->toilet_boy;
             $data->toilet_ratio = 0; 
             $data->toilet_girl_ratio = 0;
             $data->toilet_boy_ratio = 0;
             if ($data->toilet_total != 0){
-                $data->toilet_ratio = round($data->total_students / $data->toilet_total, 2);
+                $data->toilet_ratio = round((int) $data->students_total / (int) $data->toilet_total, 2);
                 if($data->toilet_girl !=0 && $data->ts_girl !=0){
                     $data->toilet_girl_ratio = round($data->ts_girl / $data->toilet_girl, 2);
                 }

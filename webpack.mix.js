@@ -39,6 +39,8 @@ mix.js([
     .copy('node_modules/@fortawesome/fontawesome-free/webfonts/', 'public/vendor/fontawesome/webfonts/')
     .copy('node_modules/js-cache/bundle/cache.js', 'public/vendor/cache-js/cache.js')
     .copy('resources/assets/json/config.json', 'public/config.json')
+    .copy('resources/assets/json/geojson.json', 'public/geojson.json')
+    .copy('resources/assets/json/rgeojson.json', 'public/rgeojson.json')
     .sass('resources/assets/sass/app.scss', 'public/css')
     .version();
 

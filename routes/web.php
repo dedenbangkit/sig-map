@@ -15,3 +15,5 @@ Route::get('/', 'PageController@index')->name('landing');
 Route::get('/test', 'PageController@test')->name('test');
 Route::get('/database', 'PageController@database')->name('database');
 Route::get('/stats/{page}', 'PageController@stats')->name('stats');
+Route::get('/visualization', 'PageController@visualization')->name('visualization');
+Route::post('/download', 'PageController@download')->name('download');

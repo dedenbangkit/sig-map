@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a class="navbar-brand" href="{{route('landing')}}"><img src="{{asset('images/logo/unicef-logo.png')}}" height="25"></a>
+    <a class="navbar-brand" href="{{route('landing')}}"><img src="{{asset('images/logo/solomon-island-logo.png')}}" height="25"></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
         aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="fas fa-bars"></i>
+        Menu
       </button>
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
@@ -13,20 +13,14 @@
             <li class="nav-item {{ Request::is('database') ? "active" : "" }}">
                 <a class="nav-link" href="{{route('database')}}">Database</a>
             </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown"
-                    aria-haspopup="true" aria-expanded="false">Visualization</a>
-                <div class="dropdown-menu" aria-labelledby="dropdown01">
-                    <?php $pages = ['management', 'hygiene','water_supply', 'sanitation']; ?> 
-                    @foreach ($pages as $page)
-                        <a class="dropdown-item" href="{{ route('stats',['page'=>$page]) }}">{{ucfirst(str_replace('_',' ',$page))}}</a>
-                    @endforeach
-                </div>
+            <li class="nav-item {{ Request::is('visualization') ? "active" : "" }}">
+                <a class="nav-link" href="{{route('visualization')}}">Visualization</a>
             </li>
         </ul>
 		<div class="form-inline my-2 my-lg-0">
 				<form onsubmit="focusTo()" id="stack_search">
 					<a href="#" id="change-cluster" class="mp-btn btn btn-light my-2 my-sm-0" data-cluster="yes"><i class="fa fa-pie-chart"></i></a>
+					<a href="#" onclick="downloadData()" class="mp-btn btn btn-light my-2 my-sm-0"><i class="fa fa-download"></i></a>
 					<a href="#" onclick="focusNormal()" class="mp-btn btn btn-light my-2 my-sm-0"><i class="fa fa-expand"></i></a>
 					<a href="#" onclick="maps.zoomOut()" class="mp-btn btn btn-light my-2 my-sm-0"><i class="fa fa-search-minus"></i></a>
 					<a href="#" onclick="maps.zoomIn()" class="mp-btn btn btn-light my-2 my-sm-0"><i class="fa fa-search-plus"></i></a>

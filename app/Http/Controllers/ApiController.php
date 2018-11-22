@@ -80,6 +80,16 @@ class ApiController extends Controller
         return $data;
     }
 
+    public function transGeoJson(Request $request, DB $db)
+    {
+        $features = $db->maps(); 
+        $collection = collect($features)->map(function($x){
+            $y = collect([$x['geometry']['coordinates']]);
+            $v = $y->merge(collect($x['properties'])->values());
+            return $v->all();
+        });
+        return $collection;
+    }
     public function getGeoFeatures(Request $request, DB $db)
     {
         if (Cache::has('all-geo-features')) {
@@ -141,15 +151,65 @@ class ApiController extends Controller
         Cache::put('province-list', $data, 60);
         return $data;
     }
+
+    public function getCountIndicator(Request $request, DB $db)
+    {
+        $province = collect([
+          "Central",
+          "Choiseul",
+          "Guadalcanal",
+          "Honiara",
+          "Isabel",
+          "Makira",
+          "Malaita",
+          "Rennell and Bellona",
+          "Temotu",
+          "Western"
+        ]);
+        $collection = $db->countGroup($request->name);
+        $answer = $db->indicators($request->name);
+        $collection = $collection->mapToGroups(function ($item, $key) use ($request) {
+            return [$item['PV'] => array($item[$request->name] => (int) $item['TT'])];
+        });
+        $res = collect();
+        $answer->each(function($a, $i) use ($province, $res, $collection) {
+                $b = collect();
+                collect($province)->each(function($p) use ($i,$a,$b, $collection) {
+                $x = $collection[$p];
+                    if(isset($x[$i][$a])){
+                        $b->push($x[$i][$a]);
+                    }else{
+                        $b->push(0);
+                    }
+                });
+				$res->push([
+					'name'=>$a,
+					'stack'=>'总量',
+					'data'=>$b,
+                    'label' => array('normal' => array("show"=> true, "position"=> 'insideRight')),
+					'type'=>'bar'
+				]);
+        });
+		$db = $res->transform(function($r){
+			$med = collect();
+			$med->push($r['data']);
+			$med->push(collect($r['data'])->avg());
+			$r['data'] = $med->flatten(1);
+			return $r;
+		});
+        $spath = asset('/config.json');
+        $keys = json_decode(file_get_contents($spath, true), true);
+        return array(
+			'answer' => $answer, 
+            'question' => $keys[$request->name],
+            'province' => $province->push(['National'])->flatten(),
+            'result' => $db
+        );
+    }
+
     /*
      * Indicator Test
      */
-    public function getIndicators(Request $request, DB $db)
-    {
-        $data = $db->indicators();
-        return $data;
-    }
-
     private function getFeatures($features, $type)
     {
         $properties = array(
@@ -161,19 +221,89 @@ class ApiController extends Controller
 			),
 			'toilet-type' => array(
 				'lookup'=> array(
-					'1'=>'No Toilet',
-					'4'=>'Private',
+					'4'=>'Saperated Toilet for Boys and Girls',
 					'2'=>'Shared',
+					'1'=>'No Toilet',
 				),
-				'name' => 'Type of Toilet',
+				'name' => 'Saperated Toilet',
 			),
 			'water-source' => array(
 				'lookup'=> array(
-					'1'=>'No Water',
-					'4'=>'Has Water',
 					'5'=>'Safe to Drink',
+					'4'=>'Limited',
+					'1'=>'No Service',
 				),
-				'name' => 'Water SOurce',
+				'name' => 'Water Source',
+			),
+			'water-treatment' => array(
+				'lookup'=> array(
+					'4'=>'Chlorine',
+					'2'=>'Unknown',
+					'1'=>'No Services',
+				),
+				'name' => 'Water Treatment',
+			),
+			'drinking-water-source' => array(
+				'lookup'=> array(
+					'5'=>'Basic',
+					'2'=>'Limited',
+					'1'=>'No Service',
+				),
+				'name' => 'Schools with Drinking Water Source',
+			),
+			'limited-mobility-water-access' => array(
+				'lookup'=> array(
+					'5'=>'Basic',
+					'2'=>'Limited',
+					'1'=>'No Service',
+				),
+				'name' => 'Water Access with Limited Mobility',
+			),
+			'primary-water-source' => array(
+				'lookup'=> array(
+					'5'=>'Improved',
+					'2'=>'Unimproved',
+					'1'=>'No Water',
+				),
+				'name' => 'Primary Drinking Water Source',
+			),
+			'accesssibility-with-limited-mobility' => array(
+				'lookup'=> array(
+					'4'=>'Accesible',
+					'1'=>'Inaccessible',
+				),
+				'name' => 'Accessibility with Limited Mobility',
+			),
+			'hand-washing-property' => array(
+				'lookup'=> array(
+					'5'=>'Basic',
+					'2'=>'Limited',
+					'1'=>'No Services',
+				),
+				'name' => 'Schools with Basic Handwashing',
+			),
+			'single-sex-sanitation' => array(
+				'lookup'=> array(
+					'4'=>'Basic',
+					'2'=>'Limited',
+					'1'=>'No Service',
+				),
+				'name' => 'Schools with improved sanitation facilities',
+			),
+			'functional-toilet' => array(
+				'lookup'=> array(
+					'4'=>'Available',
+					'1'=>'Not Available',
+				),
+				'name' => 'Schools with Functional Toilets',
+			),
+			'sanitation-improved' => array(
+				'lookup'=> array(
+					'5'=>'Improved',
+					'2'=>'Unimproved',
+					'1'=>'No Toilet',
+				),
+				'name' => 'Primary Sanitation Type',
 			),
             'neutral' => array(
                 'lookup'=>array(
@@ -182,13 +312,23 @@ class ApiController extends Controller
                 'name' => 'No Filter'
             )
         );
-        $complete = ['Wash Club', 'Washing Facilities', 'Annual Grant', 'Community Support', 'Cleaning Schedule', 'Teacher Training or Workshop'];
+        $complete = [
+            'Wash Club',
+            'Handwashing Facilities are Available',
+            'Annual Grant',
+            'Community Support',
+            'Cleaning Schedule',
+            'Teacher Training or Workshop',
+            'Private Washing Facilities for Girl',
+            'Soap or Water Availability',
+            'Water Inspection',
+        ];
         $properties = $this->getCompleteFeatures($properties, $complete);
         $data = array(
             'type' => 'FeatureCollection',
             'properties' => array(
                 'fields' => $properties,
-                'attribution' => array('id' => 'toilet-type','name' => 'Toilet Type','type'=>'str'),
+                'attribution' => array('id' => 'water-source','name' => 'Water Source','type'=>'str'),
                 'attributes' => [array('id'=>'school-info-group','name' => 'School Information', 'collection' => [ 
                         array('id'=>'students_total', 'name'=>'Number of Students', 'type'=>'num'),
                         array('id'=>'students_boy', 'name'=>'Number of Boy Students', 'type'=>'num'),
@@ -200,18 +340,31 @@ class ApiController extends Controller
                     ]),
                     array('id'=>'water-supply-group','name' => 'Water Supply', 'collection' => [
                         array('id'=>'water-source', 'name'=>'Water Source', 'type'=>'str'),
+                        array('id'=>'water-treatment', 'name'=>'Water Treatment', 'type'=>'str'),
+                        array('id'=>'primary-water-source', 'name'=>'Primary Drinking Water Source', 'type'=>'str'),
+                        array('id'=>'drinking-water-source', 'name'=>'School with Basic Drinking Source', 'type'=>'str'),
+                        array('id'=>'limited-mobility-water-access', 'name'=>'Water Access with Limited Mobility', 'type'=>'str'),
+                        array('id'=>'water-inspection', 'name'=>'Availability of water at time of Inspection', 'type'=>'str'),
                     ]),
                     array('id'=>'hygiene-group','name' => 'Hygiene', 'collection' => [
+                        array('id'=>'handwashing-facilities-are-available', 'name'=>'Handwashing Facilities are Available', 'type'=>'str'),
+                        array('id'=>'hand-washing-property', 'name'=>'Schools with Basic Handwashing', 'type'=>'str'),
+                        array('id'=>'soap-or-water-availability', 'name'=>'Handwashing Facilities have Soap and Water Available', 'type'=>'str'),
+                        array('id'=>'private-washing-facilities-for-girl', 'name'=>'Private Washing Facilities for Girl', 'type'=>'str'),
                         array('id'=>'wash-club', 'name'=>'Wash Club', 'type'=>'str'),
                     ]),
                     array('id'=>'sanitation-group','name' => 'Sanitation', 'collection' => [
-                        array('id'=>'toilet-type', 'name'=>'Type of Toilet', 'type'=>'str'),
+                        array('id'=>'toilet-type', 'name'=>'Separated toilet', 'type'=>'str'),
                         array('id'=>'toilet_total', 'name'=>'Number of Toilets', 'type'=>'num'),
                         array('id'=>'toilet_girl', 'name'=>'Toilets for Girl', 'type'=>'num'),
                         array('id'=>'toilet_boy', 'name'=>'Toilets for Boy', 'type'=>'num'),
                         array('id'=>'toilet_ratio', 'name'=>'Toilet Ratio', 'type'=>'num'),
                         array('id'=>'toilet_girl_ratio', 'name'=>'Toilet Girl Ratio', 'type'=>'num'),
                         array('id'=>'toilet_boy_ratio', 'name'=>'Toilet Boy Ratio', 'type'=>'num'),
+                        array('id'=>'functional-toilet', 'name'=>'Schools with Functional Toilets', 'type'=>'str'),
+                        array('id'=>'accesssibility-with-limited-mobility', 'name'=>'Accessibity with Limited Mobility', 'type'=>'str'),
+                        array('id'=>'single-sex-sanitation', 'name'=>'Schools with improved sanitation facilities', 'type'=>'str'),
+                        array('id'=>'sanitation-improved', 'name'=>'Primary Sanitation Type', 'type'=>'str'),
                     ]),
                     array('id'=>'management-group','name' => 'School Management', 'collection' => [
                         array('id'=>'cleaning-schedule', 'name'=>'Cleaning Schedule', 'type'=>'str'),

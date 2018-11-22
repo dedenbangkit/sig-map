@@ -21,8 +21,7 @@ $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn btn-light my-2 my-sm
 
 var data_table = $('#school_table').DataTable({
     pageLength:10,
-    scrollX:true,
-    autoWidth:false,
+    autoWidth: false,
 	processing: true,
 	serverSide: true,
 	ajax: {
@@ -75,14 +74,13 @@ var data_table = $('#school_table').DataTable({
 $("#find").removeAttr('onkeydown');
 $('#school_table tbody').on('click', 'tr', function () {
 	var data = data_table.row( this ).data();
-    console.log(data);
 	getDetails(data['A'],'id');
 });
 
 $(btn4).on('click', function () {
 	searchTable();
-    //var column = data_table.column( $(this).attr('data-column') );
-    //column.visible( ! column.visible() );
+    var column = data_table.column( $(this).attr('data-column') );
+    column.visible( ! column.visible() );
 });
 
 $(frm).on('submit', function() {

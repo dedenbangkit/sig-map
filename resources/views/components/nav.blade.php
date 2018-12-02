@@ -7,6 +7,7 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
+            @if ($user = Auth::user())
             <li class="nav-item {{ Request::is('/') ? "active" : "" }}">
                 <a class="nav-link" href="{{route('landing')}}">Home</a>
             </li>
@@ -16,7 +17,18 @@
             <li class="nav-item {{ Request::is('visualization') ? "active" : "" }}">
                 <a class="nav-link" href="{{route('visualization')}}">Visualization</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            </li>
+            @else
+            <li class="nav-item">
+                <a class="nav-link" href="#">Welcome</a>
+            </li>
+            @endif
         </ul>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
 		<div class="form-inline my-2 my-lg-0">
 				<form onsubmit="focusTo()" id="stack_search">
 					<a href="#" id="change-cluster" class="mp-btn btn btn-light my-2 my-sm-0" data-cluster="yes"><i class="fa fa-pie-chart"></i></a>
@@ -29,6 +41,7 @@
 					<input type="submit" id="find_submit" style="position: absolute; left: -9999px"/>
 					<a href="#" onclick="focusTo()" class="btn btn-primary my-2 my-sm-0"><i class="fa fa-search"></i></a>
 				</form>
+
         </div>
     </div>
 </nav>

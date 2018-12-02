@@ -89,7 +89,7 @@ class Database extends Model
 			if ($data->sanitation_impr === 'Unimproved') {
 				$sanitation_improved = '2';
 			}
-			if ($data->handwashing_prop === 'Improved') {
+			if ($data->sanitation_impr === 'Improved') {
 				$sanitation_improved = '4';
 			}
             $primary_water_source = '1';
@@ -123,7 +123,7 @@ class Database extends Model
             $data->wash_soap = ($data->wash_soap !== null ? "4":"1");
             $data->wash_club = ($data->wash_club === "Yes" ? "4":"1");
             $data->funct_toilet = ($data->funct_toilet <= 0 ? "4":"1");
-            $data->water_inspection = ($data->water_inspection <= "Yes" ? "4":"1");
+            $data->water_inspection = ($data->water_inspection === "Yes" ? "4":"1");
             $data->handwashing_facilities = ($data->handwashing_facilities === "Yes" ? "4":"1");
             $data->water_w_mob = ($data->water_w_mob === "Yes" ? "4":"1");
             $data->sanitation_acc = ($data->sanitation_acc === "Accesible" ? "4":"1");

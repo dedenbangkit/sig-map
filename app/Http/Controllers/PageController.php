@@ -40,6 +40,18 @@ class PageController extends Controller
         return view('visualization');
     }
 
+    public function demo(Request $request)
+    {
+        ResponseCache::clear();
+        return view('demo');
+    }
+
+    public function timeline(Request $request)
+    {
+        ResponseCache::clear();
+        return view('timeline');
+    }
+
     public function download(Request $request, DB $db)
     {
         $filter= collect($db->downloadExcel($request->lists));

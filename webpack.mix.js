@@ -30,6 +30,7 @@ mix.js([
     ], 'public/js/charts.js')
     .babel('resources/assets/js/global.js', 'public/js/global.js')
     .babel('resources/assets/js/visualization.js', 'public/js/visualization.js')
+    .babel('resources/assets/js/demo.js', 'public/js/demo.js')
     .scripts('resources/assets/js/vendors/echarts.min.js', 'public/js/vendors/echarts.min.js')
     .scripts('resources/assets/js/vendors/datatables.min.js', 'public/js/vendors/datatables.min.js')
     .scripts('resources/assets/js/vendors/d3.v3.min.js', 'public/js/vendors/d3.v3.min.js')
@@ -43,6 +44,7 @@ mix.js([
     .copy('resources/assets/json/config.json', 'public/config.json')
     .copy('resources/assets/json/geojson.json', 'public/geojson.json')
     .copy('resources/assets/json/rgeojson.json', 'public/rgeojson.json')
+    .copy('resources/assets/json/all-countable.json', 'public/all-countable.json')
     .sass('resources/assets/sass/app.scss', 'public/css')
     .version();
 

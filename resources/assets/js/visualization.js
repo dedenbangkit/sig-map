@@ -2,9 +2,9 @@ $('#stack_search').children().remove();
 
 let cacheRem = JSON.parse(localStorage.getItem('all-visualization'));
 if (cacheRem !== null) {
-	cacheRem.forEach(function(x){
-		localStorage.removeItem(x);
-	});
+    cacheRem.forEach(function(x) {
+        localStorage.removeItem(x);
+    });
 }
 
 var provinceList = [
@@ -108,50 +108,54 @@ function toTitleCase(str) {
     );
 }
 
-function newChart(param, randomId, colors) {
-    d3.json('/api/getcount/' + param, function(error, data) {
-        var newDiv = d3.select('#vizcomps')
-            .append('div')
-            .attr('id', randomId)
-            .attr('class', 'col-md-6 chart-box');
-        newDiv.append('div').attr('class', 'visualization').attr('id', 'selector-' + randomId);
-        var dom = document.getElementById('selector-' + randomId);
-        var myChart = echarts.init(dom);
-        var app = {};
-        var chartOption = vizOptions(data.answer, data.province, data.result, colors);
-        if (chartOption && typeof chartOption === "object") {
-            myChart.setOption(chartOption, true);
-            $('#selector-' + randomId).prepend('<div class="card-header">' + toTitleCase(data.question) + '</div>');
-            var allCharts = JSON.parse(localStorage.getItem('all-visualization'));
-            allCharts.push(myChart.id);
-            localStorage.setItem('all-visualization', JSON.stringify(allCharts));
-            localStorage.setItem(myChart.id, JSON.stringify(data.result));
-        }
-    });
+function newChart(data, randomId, colors) {
+    var newDiv = d3.select('#vizcomps')
+        .append('div')
+        .attr('id', randomId)
+        .attr('class', 'col-md-6 chart-box');
+    newDiv.append('div').attr('class', 'visualization').attr('id', 'selector-' + randomId);
+    var dom = document.getElementById('selector-' + randomId);
+    var myChart = echarts.init(dom);
+    var app = {};
+    var chartOption = vizOptions(data.answer, data.province, data.result, colors);
+    if (chartOption && typeof chartOption === "object") {
+        myChart.setOption(chartOption, true);
+        $('#selector-' + randomId).prepend('<div class="card-header">' + toTitleCase(data.question) + '</div>');
+        var allCharts = JSON.parse(localStorage.getItem('all-visualization'));
+        allCharts.push(myChart.id);
+        localStorage.setItem('all-visualization', JSON.stringify(allCharts));
+        localStorage.setItem(myChart.id, JSON.stringify(data.result));
+    }
 }
 
-function generateCharts() {
+function generateCharts(data) {
     // Water
-    newChart('Y', createId(), ['#dc3545', '#28a745']);
-    newChart('EY', createId(), ['#40B1e6', '#fff176', '#ffCA28']);
-    newChart('EZ', createId(), ['#4fc3f7', '#fff176', '#ffb300']);
-    // newChart('Z', createId(), ['#4fc3f7', '#fff176', '#ffb300']);
-    newChart('AN', createId(), ['#dc3545', '#28a745']);
-    // newChart('AP', createId(), ['#fff176','#dc3545','#28a745']);
+    newChart(data['Y'], createId(), ['#dc3545', '#28a745']);
+    newChart(data['EY'], createId(), ['#40B1e6', '#fff176', '#ffCA28']);
+    newChart(data['EZ'], createId(), ['#4fc3f7', '#fff176', '#ffb300']);
+    newChart(data['AN'], createId(), ['#dc3545', '#28a745']);
     // Sanitation
-    newChart('AV', createId(), ['#dc3545', '#28a745']);
-    // newChart('BA', createId(), ['#4fc3f7', '#fff176', '#ffb300']);
-    newChart('FB', createId(), ['#67b769', '#fff176', '#ffb300']);
-    newChart('FC', createId(), ['#4fc3f7', '#fff176', '#ffb300']);
-    newChart('FD', createId(), ['#4fc3f7', '#fff176', '#ffb300']);
+    newChart(data['AV'], createId(), ['#dc3545', '#28a745']);
+    newChart(data['FB'], createId(), ['#67b769', '#fff176', '#ffb300']);
+    newChart(data['FC'], createId(), ['#4fc3f7', '#fff176', '#ffb300']);
+    newChart(data['FD'], createId(), ['#4fc3f7', '#fff176', '#ffb300']);
     // Hygiene
-    newChart('CF', createId(), ['#dc3545', '#28a745']);
-    newChart('CL', createId(), ['#4fc3f7', '#fff176', '#ffb300']);
-    newChart('CR', createId(), ['#dc3545', '#28a745']);
-    newChart('FE', createId(), ['#AB47BC', '#fff176', '#ffb300']);
+    newChart(data['CF'], createId(), ['#dc3545', '#28a745']);
+    newChart(data['CL'], createId(), ['#4fc3f7', '#fff176', '#ffb300']);
+    newChart(data['CR'], createId(), ['#dc3545', '#28a745']);
+    newChart(data['FE'], createId(), ['#AB47BC', '#fff176', '#ffb300']);
 }
 
-generateCharts();
+var rwchart = JSON.parse(localStorage.getItem('raw-chart-data'));
+if (rwchart === null) {
+    d3.json('/api/getcountable', function(error, data) {
+        generateCharts(data);
+        localStorage.setItem('raw-chart-data', JSON.stringify(data));
+    });
+} else {
+    generateCharts(rwchart);
+}
+
 
 function updateCharts() {
     var allCharts = JSON.parse(localStorage.getItem('all-visualization'));

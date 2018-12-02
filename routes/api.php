@@ -19,8 +19,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/params','ApiController@getParams');
 Route::get('/locations','ApiController@getLocation');
 Route::get('/rgeojson/','ApiController@getGeoRson');
+Route::get('/getcountable','ApiController@getCountable');
 Route::get('/geojson/','ApiController@getGeoJson');
 Route::get('/getcount/{name}','ApiController@getCountIndicator');
+Route::get('/getcountall','ApiController@getCountAllIndicators');
 Route::get('/transform/','ApiController@transGeoJson');
 Route::get('/geofeatures/','ApiController@getGeoFeatures');
 Route::get('/province/','ApiController@getProvinces');

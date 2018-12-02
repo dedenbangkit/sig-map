@@ -114,6 +114,18 @@ class ApiController extends Controller
         return $data;
     }
 
+    public function getCountable(Request $request)
+    {
+        if (Cache::has('all-countable')) {
+            $data = Cache::get('all-countable');
+            return $data;
+        }
+        $spath = asset('/all-countable.json');
+        $data = file_get_contents($spath, true); 
+        Cache::put('all-countable', $data, 60);
+        return $data;
+    }
+
     public function getSchoolType(Request $request, DB $db)
     {
         return [
@@ -152,7 +164,17 @@ class ApiController extends Controller
         return $data;
     }
 
-    public function getCountIndicator(Request $request, DB $db)
+	public function getCountAllIndicators(Request $request, DB $db)
+	{
+        $variables = collect(['Y','EY','EZ','AN','AV','FB','FC','FD','CF','CL','CR','FE']);
+        $results = collect();
+        $variables->each(function($x) use ($db, $results) {
+            $results[$x] = $this->transformChart($db, $x);
+        });
+        return $results;
+	}
+
+    private function transformChart($db, $name)
     {
         $province = collect([
           "Central",
@@ -166,15 +188,16 @@ class ApiController extends Controller
           "Temotu",
           "Western"
         ]);
-        $collection = $db->countGroup($request->name);
-        $answer = $db->indicators($request->name);
-        $collection = $collection->mapToGroups(function ($item, $key) use ($request) {
-            return [$item['PV'] => array($item[$request->name] => (int) $item['TT'])];
+        $collection = $db->countGroup($name);
+        $answer = $db->indicators($name);
+        $collection = $collection->mapToGroups(function ($item, $key) use ($name) {
+            return [$item['PV'] => array($item[$name] => (int) $item['TT'])];
         });
+		$sum_province = collect();
         $res = collect();
         $answer->each(function($a, $i) use ($province, $res, $collection) {
                 $b = collect();
-                collect($province)->each(function($p) use ($i,$a,$b, $collection) {
+                collect($province)->each(function($p, $g) use ($i,$a,$b,$collection) {
                 $x = $collection[$p];
                     if(isset($x[$i][$a])){
                         $b->push($x[$i][$a]);
@@ -184,9 +207,8 @@ class ApiController extends Controller
                 });
 				$res->push([
 					'name'=>$a,
-					'stack'=>'总量',
+					'stack'=>'2018',
 					'data'=>$b,
-                    'label' => array('normal' => array("show"=> true, "position"=> 'insideRight')),
 					'type'=>'bar'
 				]);
         });
@@ -201,7 +223,7 @@ class ApiController extends Controller
         $keys = json_decode(file_get_contents($spath, true), true);
         return array(
 			'answer' => $answer, 
-            'question' => $keys[$request->name],
+            'question' => $keys[$name],
             'province' => $province->push(['National'])->flatten(),
             'result' => $db
         );
@@ -299,7 +321,7 @@ class ApiController extends Controller
 			),
 			'sanitation-improved' => array(
 				'lookup'=> array(
-					'5'=>'Improved',
+					'4'=>'Improved',
 					'2'=>'Unimproved',
 					'1'=>'No Toilet',
 				),

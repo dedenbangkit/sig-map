@@ -18,7 +18,7 @@
                 <a class="nav-link" href="{{route('visualization')}}">Visualization</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fa fa-sign-out"></i>&nbsp;Logout</a>
             </li>
             @else
             <li class="nav-item">
@@ -29,6 +29,7 @@
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
             @csrf
         </form>
+        @if ($user = Auth::user())
 		<div class="form-inline my-2 my-lg-0">
 				<form onsubmit="focusTo()" id="stack_search">
 					<a href="#" id="change-cluster" class="mp-btn btn btn-light my-2 my-sm-0" data-cluster="yes"><i class="fa fa-pie-chart"></i></a>
@@ -43,5 +44,6 @@
 				</form>
 
         </div>
+        @endif
     </div>
 </nav>

@@ -218,4 +218,6 @@ return [
 
     ],
 
+    'data-sources' => 'Data collected from WASH in School survey results by <a href="https://akvo.org/products/akvoflow/#overview">Akvo Flow</a>.',
+
 ];

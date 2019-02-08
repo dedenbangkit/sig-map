@@ -243,87 +243,180 @@ class ApiController extends Controller
 			),
 			'toilet-type' => array(
 				'lookup'=> array(
-					'4'=>'Saperated Toilet for Boys and Girls',
-					'2'=>'Shared',
-					'1'=>'No Toilet',
+                    '4'=> array(
+                        'option' => 'Saperated Toilet for Boys and Girls',
+                        'description' => 'lorem saperated ipsum',
+                    ),
+                    '2'=> array(
+                        'option' => 'Shared',
+                        'description' => 'lorem shared ipsum',
+                    ),
+                    '1'=> array(
+                        'option' => 'No Toilet',
+                        'description' => 'lorem no service ipsum',
+                    )
 				),
 				'name' => 'Saperated Toilet',
 			),
 			'water-source' => array(
 				'lookup'=> array(
-					'5'=>'Safe to Drink',
-					'4'=>'Limited',
-					'1'=>'No Service',
+                    '5'=> array (
+                        'option' => 'Safe to Drink',
+                        'description' => 'lorem safe to drink'
+                    ),
+                    '4'=> array(
+                        'option' => 'Limited',
+                        'description' => 'lorem limited ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'No Service',
+                        'description' => 'lorem no service ipsum'
+                    )
 				),
 				'name' => 'Water Source',
 			),
 			'water-treatment' => array(
 				'lookup'=> array(
-					'4'=>'Chlorine',
-					'2'=>'Unknown',
-					'1'=>'No Services',
+                    '4'=> array(
+                        'option' => 'Chlorine',
+                        'description' => 'lorem chlorine ipsum'
+                    ),
+                    '2'=> array(
+                        'option' => 'Unknown',
+                        'description' => 'lorem unknown ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'No Services',
+                        'description' => 'lorem no services ipsum'
+                    )
 				),
 				'name' => 'Water Treatment',
 			),
 			'drinking-water-source' => array(
 				'lookup'=> array(
-					'5'=>'Basic',
-					'2'=>'Limited',
-					'1'=>'No Service',
+                    '5'=> array(
+                        'option' => 'Basic',
+                        'description' => 'lorem basic ipsum'
+                    ),
+                    '2'=> array(
+                        'option' => 'Limited',
+                        'description' => 'lorem limited ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'No Services',
+                        'description' => 'lorem no services ipsum'
+                    )
 				),
 				'name' => 'Schools with Drinking Water Source',
 			),
 			'limited-mobility-water-access' => array(
 				'lookup'=> array(
-					'5'=>'Basic',
-					'2'=>'Limited',
-					'1'=>'No Service',
+                    '5'=> array(
+                        'option' => 'Basic',
+                        'description' => 'lorem basic ipsum'
+                    ),
+                    '2'=> array(
+                        'option' => 'Limited',
+                        'description' => 'lorem limited ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'No Services',
+                        'description' => 'lorem no services ipsum'
+                    )
 				),
 				'name' => 'Water Access with Limited Mobility',
 			),
 			'primary-water-source' => array(
 				'lookup'=> array(
-					'5'=>'Improved',
-					'2'=>'Unimproved',
-					'1'=>'No Water',
+                    '5'=> array(
+                        'option' => 'Improved',
+                        'description' => 'lorem improved ipsum'
+                    ),
+                    '2'=> array(
+                        'option' => 'Limited',
+                        'description' => 'lorem improved ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'No Services',
+                        'description' => 'lorem no water ipsum'
+                    )
 				),
 				'name' => 'Primary Drinking Water Source',
 			),
 			'accesssibility-with-limited-mobility' => array(
 				'lookup'=> array(
-					'4'=>'Accesible',
-					'1'=>'Inaccessible',
+                    '4'=> array(
+                        'option' => 'Accesible',
+                        'description' => 'lorem improved ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'Inaccessible',
+                        'description' => 'lorem no water ipsum'
+                    )
 				),
 				'name' => 'Accessibility with Limited Mobility',
 			),
 			'hand-washing-property' => array(
 				'lookup'=> array(
-					'5'=>'Basic',
-					'2'=>'Limited',
-					'1'=>'No Services',
+                    '5'=> array(
+                        'option' => 'Basic',
+                        'description' => 'lorem basic ipsum'
+                    ),
+                    '2'=> array(
+                        'option' => 'Limited',
+                        'description' => 'lorem limited ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'No Services',
+                        'description' => 'lorem no services ipsum'
+                    )
 				),
 				'name' => 'Schools with Basic Handwashing',
 			),
 			'single-sex-sanitation' => array(
 				'lookup'=> array(
-					'4'=>'Basic',
-					'2'=>'Limited',
-					'1'=>'No Service',
+                    '5'=> array(
+                        'option' => 'Basic',
+                        'description' => 'lorem basic ipsum'
+                    ),
+                    '2'=> array(
+                        'option' => 'Limited',
+                        'description' => 'lorem limited ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'No Services',
+                        'description' => 'lorem no services ipsum'
+                    )
 				),
 				'name' => 'Schools with improved sanitation facilities',
 			),
 			'functional-toilet' => array(
 				'lookup'=> array(
-					'4'=>'Available',
-					'1'=>'Not Available',
+                    '4'=> array(
+                        'option' => 'Accesible',
+                        'description' => 'lorem improved ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'Inaccessible',
+                        'description' => 'lorem no water ipsum'
+                    )
 				),
 				'name' => 'Schools with Functional Toilets',
 			),
 			'sanitation-improved' => array(
 				'lookup'=> array(
-					'4'=>'Improved',
-					'2'=>'Unimproved',
-					'1'=>'No Toilet',
+                    '4'=> array(
+                        'option' => 'Chlorine',
+                        'description' => 'lorem chlorine ipsum'
+                    ),
+                    '2'=> array(
+                        'option' => 'Unknown',
+                        'description' => 'lorem unknown ipsum'
+                    ),
+                    '1'=> array(
+                        'option' => 'No Services',
+                        'description' => 'lorem no services ipsum'
+                    )
 				),
 				'name' => 'Primary Sanitation Type',
 			),
@@ -413,8 +506,14 @@ class ApiController extends Controller
             $key = str_replace(' ','-',$key);
             return $data[$key] = array(
 				'lookup'=> array(
-					'1'=>'No',
-					'4'=>'Yes',
+                    '1'=> array(
+                        'option'=>'No',
+                        'description'=>'Lorem ipsum bro, no. Vivamus a consectetur nisl, ut vehicula magna. Curabitur dolor ligula, euismod luctus interdum eu, varius sed eros. Mauris porttitor lacus eget tellus fermentum ornare sit amet at orci.',
+                    ),
+                    '4'=> array(
+                        'option'=>'Yes',
+                        'description'=>'Lorem ipsum bro, yesss. Vivamus a consectetur nisl, ut vehicula magna. Curabitur dolor ligula, euismod luctus interdum eu, varius sed eros. Mauris porttitor lacus eget tellus fermentum ornare sit amet at orci.',
+                    ),
 				),
 				'name' => $val
             );

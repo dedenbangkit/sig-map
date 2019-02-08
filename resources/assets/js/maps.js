@@ -507,8 +507,7 @@ function renderLegend(database) {
             return 'category-' + d.key;
         })
 		.attr('data-include', function(d){
-			console.log(d);
-			return d.key;
+			return d.value.description;
 		})
         .on('click', function(d) {
             $('.leaflet-marker-icon').remove();
@@ -526,7 +525,13 @@ function renderLegend(database) {
             'legenditem': true
         })
         .text(function(d) {
-            return d.value;
+            return d.value.option;
+        })
+        .on('mouseover', function(d) {
+            $('body').append('<div class="description-box-hover"><span>'+d.value.description+'</span></div>');
+        })
+        .on('mouseout', function(d) {
+            $('.description-box-hover').remove();
         });
 }
 
@@ -756,7 +761,6 @@ function createHistogram() {
             var totVal = axis.data.length;
             minVal = axis.data[0];
             maxVal = axis.data[totVal - 1];
-            console.log(minVal, maxVal);
             localStorage.setItem('filterPos', JSON.stringify([minVal, maxVal]))
             filterMaps(0, 0, attr_name);
         } else {

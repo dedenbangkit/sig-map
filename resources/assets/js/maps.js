@@ -173,7 +173,7 @@ var geojson,
     metadata,
     clustered = true,
     geojsonPath = '/api/rgeojson/',
-    categoryField = 'water-source',
+    categoryField = 'primary-water-source',
     iconField = categoryField,
     popupFields = ['school_name', 'school_id'],
     rmax = 30, //Maximum radius for cluster pies
@@ -220,10 +220,7 @@ function getGeoJson() {
             'school_id',
             'government_funds',
             'toilet-type',
-            'limited-mobility-water-access',
             'water-inspection',
-            'water-source',
-            'water-treatment',
             'drinking-water-source',
             'primary-water-source',
             'wash-club',
@@ -235,7 +232,6 @@ function getGeoJson() {
             'hand-washing-property',
             'private-washing-facilities-for-girl',
             'soap-or-water-availability',
-            'accesssibility-with-limited-mobility',
             'functional-toilet',
             'single-sex-sanitation',
             'sanitation-improved',
@@ -528,7 +524,7 @@ function renderLegend(database) {
             return d.value.option;
         })
         .on('mouseover', function(d) {
-            $('body').append('<div class="description-box-hover"><span>'+d.value.description+'</span></div>');
+            $('#legend').append('<div class="description-box-hover"><hr><span>'+d.value.description+'</span></div>');
         })
         .on('mouseout', function(d) {
             $('.description-box-hover').remove();

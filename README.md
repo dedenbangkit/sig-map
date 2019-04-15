@@ -40,3 +40,5 @@ Otherwise, you can setup your virtual hosts with this value
 </VirtualHost>
 ```
 Assuming that you have this repo inside Sites folder.
+Otherwise, you can setup your virtual hosts with this value
+```

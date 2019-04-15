@@ -776,5 +776,4 @@ function serializeXmlNode(xmlNode) {
     return "";
 }
 
-
 maps = map;

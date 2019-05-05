@@ -8,6 +8,7 @@ $('#stack_search a:nth-child(5)').css('display', 'inline-block');
 
 let mkr = [];
 
+console.log(localStorage);
 $('#change-cluster').on('click', function() {
     var dataCache = JSON.parse(localStorage.getItem('data'));
     if (clustered === true) {

@@ -161,6 +161,8 @@ var paramGroups = {
     ]
 };
 
+console.log("test");
+
 
 function getDetails(a, atype) {
     var id,

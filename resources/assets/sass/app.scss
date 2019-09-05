@@ -107,9 +107,18 @@ tbody tr:hover{
     color: white;
 }
 
-.form-control{
+.form-control,
+.custom-select
+{
     border-radius: 0px;
     background-clip: unset;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -webkit-border-radius: 0px;
+    background-image: url("https://image.flaticon.com/icons/svg/118/118738.svg");
+    background-position: 95% 50%;
+    background-repeat: no-repeat;
+    background-size: 16px;
 }
 .card{
     border-radius:0px;
@@ -499,10 +508,10 @@ tbody tr:hover{
 }
 .category-4{
   /* Green */
-  fill: #28a745;
-  stroke: #070;
-  background: #28a745;
-  border-color: #070;
+  fill: #ab47bc;
+  stroke: #621f6d;
+  background: #ab47bc;
+  border-color: #621f6d;
 }
 .category-5{
   /* Blue */

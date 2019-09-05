@@ -100,6 +100,7 @@ $("#category-dropdown").change(function () {
     localStorage.setItem('default-api', defaultSelect);
     map.removeLayer(markerclusters);
     $('#legend').remove();
+    $('#bar-legend').remove();
     axios.get('api/config/' + defaultSelect).then((res) => {
         localStorage.setItem("configs", JSON.stringify(res.data));
         cfg = res.data;
@@ -274,7 +275,6 @@ function defineClusterIcon(cluster) {
 					let customfields = {"lookup":{1:"No Filter"}, "Name": "No Filter"}
 					metadata["fields"][categoryField] = customfields;
 				}
-				console.log(metadata.fields[categoryField].lookup);
                 return metadata.fields[categoryField].lookup[d.data.key] + ' (' + d.data.values.length + ' point' + (d.data.values.length != 1 ? 's' : '') + ', ' + percentage + '%)';
             }
         }),
@@ -526,7 +526,7 @@ function createHistogram() {
     let barData = dbs.features.map(function(x) {
         let obj = {};
         return {
-            'school_name': x.properties[cfg.name],
+            'datapoint name': x.properties[cfg.name],
             'indicator': attr_name,
             'value': x.properties[attr_name],
         };
@@ -560,29 +560,42 @@ function createHistogram() {
         let filterPos = JSON.parse(localStorage.getItem('filterPos'));
         filterMaps(filterPos[0], filterPos[1], attr_name);
     }
+    console.log(attr_name);
+    let variableName = dbs.properties.attribution.name.replace(/_/g, ' ').toUpperCase();
     let barOption = {
         title: {
             center: 'left',
             top: 10,
+            left: '10%',
             textStyle: {
                 fontFamily: 'Roboto',
             },
-            text: dbs.properties.attribution.name.replace(/_/g, ' ').toUpperCase(),
+            text: variableName,
         },
         tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross'
+            },
+            backgroundColor: 'rgba(245, 245, 245, 0.8)',
+            borderWidth: 1,
+            borderColor: '#ccc',
+            padding: 10,
+            textStyle: {
+                color: '#000'
+            },
             trigger: 'axis',
             position: function(pt) {
                 return [pt[0], '100%'];
             },
-            axisPointer: {
-                type: 'shadow'
-            },
             formatter: function(param) {
-                return param[0]['value'] + ' Schools</br>' + param[0]['axisValue'] + ' ' + dbs.properties.attribution.name.replace(/_/g, ' ');
+                return param[0]['value'] + ' Datapoints</br>' + variableName + ': ' + param[0]['axisValue'];
             }
         },
         xAxis: {
-            name: attr_name.replace(/_/g, " ").toUpperCase(),
+            min: (chartPos[0] === 0 ? -1 : chartPos[0] - 1),
+            max: (chartPos[1] + 1),
+            name: variableName,
             type: 'category',
             nameGap: 30,
             nameLocation: 'middle',
@@ -593,24 +606,32 @@ function createHistogram() {
         },
         grid: {
             top: 80,
-            containLabel: true
+            left: '10%',
+            containLabel: true,
         },
         yAxis: {
-            name: 'TOTAL OF SCHOOL',
+            offset: 10,
+            name: 'DATAPOINT TOTAL',
+            nameTextStyle: {
+                padding: 20,
+            },
             nameLocation: 'middle',
-            nameGap: 50,
+            nameGap: 10,
             type: 'value',
             boundaryGap: [0, '100%']
         },
         dataZoom: [{
-            type: 'inside'
+            type: 'inside',
+            start: (chartPos[0] === 0 ? -1 : (chartPos[0] - 1)),
+            end: (chartPos[1] + 1)
         }, {
             type: 'slider',
             bottom: 0,
-            start: chartPos[0],
-            end: chartPos[1],
+            start: (chartPos[0] === 0 ? -1 : (chartPos[0] - 1)),
+            end: (chartPos[1] + 1),
             handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
             handleSize: '100%',
+            rangeMode: 'value',
             handleStyle: {
                 color: '#fff',
                 shadowBlur: 3,
@@ -622,7 +643,8 @@ function createHistogram() {
         series: [{
             name: attr_name.replace(/_/g, " ").toUpperCase(),
             type: 'bar',
-            large: true,
+            large: false,
+            barMaxWidth: 20,
             symbol: 'none',
             sampling: 'average',
             itemStyle: {
@@ -642,16 +664,18 @@ function createHistogram() {
         let maxVal = axis.data[axis.rangeEnd];
         let newPos = [a.start, a.end];
         localStorage.setItem('chartPos', JSON.stringify(newPos));
-        if (a.start === 0 && a.end === 100) {
-            let totVal = axis.data.length;
+        if (a.start === 0) {
             minVal = axis.data[0];
-            maxVal = axis.data[totVal - 1];
-            localStorage.setItem('filterPos', JSON.stringify([minVal, maxVal]))
-            filterMaps(0, 0, attr_name);
-        } else {
-            localStorage.setItem('filterPos', JSON.stringify([minVal, maxVal]))
-            filterMaps(minVal, maxVal, attr_name);
         }
+        if (minVal === undefined){
+            minVal = 0;
+        }
+        if (maxVal === undefined){
+            let totVal = axis.data[axis.data.length - 1];
+            maxVal = totVal;
+        }
+        localStorage.setItem('filterPos', JSON.stringify([minVal, maxVal]))
+        filterMaps(minVal, maxVal, attr_name);
     });
 }
 

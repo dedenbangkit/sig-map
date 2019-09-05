@@ -7,14 +7,11 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item {{ Request::is('/') ? "active" : "" }}">
-                <a class="nav-link" href="{{route('landing')}}">Home</a>
-            </li>
-            <li class="nav-item {{ Request::is('database') ? "active" : "" }}">
-                <a class="nav-link" href="{{route('database')}}">Database</a>
-            </li>
-            <li class="nav-item {{ Request::is('visualization') ? "active" : "" }}">
-                <a class="nav-link" href="{{route('visualization')}}">Visualization</a>
+            <li class="nav-item">
+			<div class="form-group">
+                <select class="form-control" id="category-dropdown">
+                </select>
+			</div>
             </li>
             @if ($user = Auth::user())
             <li class="nav-item">

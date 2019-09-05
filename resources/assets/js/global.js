@@ -10,7 +10,7 @@ if (localStorage.getItem('app-version') !== appVersion) {
     localStorage.setItem('app-version', appVersion);
 }
 
-var maps;
+let maps;
 
 var nainclude = [
     'identifier',
@@ -160,9 +160,6 @@ var paramGroups = {
         'when was the last training conducted?'
     ]
 };
-
-console.log("test");
-
 
 function getDetails(a, atype) {
     var id,
@@ -597,3 +594,4 @@ function sendRequest() {
         }
     });
 }
+

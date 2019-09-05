@@ -469,6 +469,13 @@ tbody tr:hover{
 }
 
 /*marker categories*/
+.category-0{
+  /* Red */
+  fill: #28a745;
+  stroke: #070;
+  background: #28a745;
+  border-color: #070;
+}
 .category-1{
   /* Red */
   fill: #dc3545;
@@ -520,7 +527,7 @@ tbody tr:hover{
 }
 .category-undefined{
   fill: #28a745;
-  stroke: #070;
+  stroke: none;
   background: #28a745;
   border-color: #070;
 }
@@ -775,3 +782,24 @@ span.search-province{
     }
 }
 
+
+/* NEW V2 */
+li.nav-item{
+	width: 250px;
+    min-width: 250px;
+    display: inline-grid;
+    margin: 0px 10px;
+}
+
+li.nav-item .form-group{
+	margin-bottom: 0px;	
+}
+
+select#category-dropdown {
+    font-size: small;
+}
+
+select#subcategory-dropdown {
+	display: none;
+    font-size: small;
+}

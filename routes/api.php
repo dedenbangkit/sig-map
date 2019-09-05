@@ -16,6 +16,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+/*
 Route::get('/params','ApiController@getParams');
 Route::get('/locations','ApiController@getLocation');
 Route::get('/rgeojson/','ApiController@getGeoRson');
@@ -32,5 +34,11 @@ Route::get('/search/{q}','ApiController@searchData');
 Route::post('/database','ApiController@getDataTables');
 Route::get('/toilets','ChartsController@getTotalToilet');
 Route::post('/verify','ApiController@getVerification');
+*/
+
+// V2
+Route::get('/source','MapController@getSources');
+Route::get('/data/{source}','MapController@getData');
+Route::get('/config/{source}','MapController@getConfig');
 
 // Route::get('/rgeojson/','ApiController@getGeoRson');
